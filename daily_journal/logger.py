@@ -1,7 +1,7 @@
 '''Main logging configuration for the daily journal app. 
 All global values can be found in config.py'''
 
-import daily_journal.config as config
+import config as config
 
 import logging
 import pathlib

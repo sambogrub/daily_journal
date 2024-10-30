@@ -1,3 +1,9 @@
+# UI section
+WINDOW_GEOMETRY = (500,800,150,150)
+WINDOW_RESIZEABLE = (False,False)
+
+
+
 # Logging section
 LOGGING_FILE_NAME = 'logs/journal.log'
 LOGGING_MAX_LOG_SIZE = 5 * 1024 * 1024

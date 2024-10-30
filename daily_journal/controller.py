@@ -1,5 +1,5 @@
 import datetime
-import daily_journal.model as model
+import model as model
 class Controller:
     '''Controller for Daily Journal. Will be responsible for interactions with the repository,
     passing entry objects between ui and the repository'''
@@ -23,6 +23,6 @@ class Controller:
 
     def assign_ui_text_to_entry(self, entry, text) -> object:
         #this function will assign the given text from the ui textbox to the 
-
+        pass
 
 
