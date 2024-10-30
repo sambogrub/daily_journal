@@ -1,11 +1,16 @@
+'''this is the module that will hold the controller for the daily journal app'''
+import model
+import ui
+
 import datetime
-import model as model
 class Controller:
     '''Controller for Daily Journal. Will be responsible for interactions with the repository,
     passing entry objects between ui and the repository'''
-    def __init__(self, repository, ui):
+    def __init__(self, repository, root):
         self.repository = repository
-        self.ui = ui
+        
+
+        
 
     def app_start(self):
         # this function will call all needed functions to start the app. 
