@@ -1,5 +1,6 @@
 # developer assigned
 test.py
+journal.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
