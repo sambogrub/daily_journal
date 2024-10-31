@@ -7,8 +7,9 @@ class Controller:
     '''Controller for Daily Journal. Will be responsible for interactions with the repository,
     passing entry objects between ui and the repository'''
     def __init__(self, repository, root):
-        self.repository = repository
-        
+        self.datacontroller = DataController(repository)
+        self.ui = ui.MainPage(root)
+
 
         
 
@@ -31,3 +32,7 @@ class Controller:
         pass
 
 
+class DataController:
+    '''This controller will interact with the repository and pass data to the main controller'''
+    def __init__(self, repository):
+        self.entries = repository

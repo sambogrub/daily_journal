@@ -41,8 +41,11 @@ def main():
     #initialize DB connection
     conn = db_connection(log)
 
-    #initialize the repository, and the model
-
+    #initialize the repository
+    app = controller.Controller(
+        repository = repository.Entries(conn),
+        root = root
+    )
 
     #run the main loop for the UI
     root.mainloop()
