@@ -43,7 +43,7 @@ def main():
 
     #initialize the repository
     app = controller.Controller(
-        repository = repository.Entries(conn),
+        repository_ = repository.Entries(conn),
         root = root
     )
 
