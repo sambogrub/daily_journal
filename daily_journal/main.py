@@ -1,5 +1,5 @@
-'''Main module for daily journal app. Will initialize the controller,
-passing it both the repository and the ui'''
+"""Main module for daily journal app. Will initialize the controller,
+passing it both the repository and the ui"""
 
 import model
 import controller
@@ -12,18 +12,18 @@ from tkinter import ttk
 import sqlite3
 
 
-def db_connection(logger) -> sqlite3.Connection:
+def db_connection(logger_:logger.logging.Logger) -> sqlite3.Connection|None:
     try:
         conn = sqlite3.connect(config.DB_NAME)
-        logger.info('Connection to DB established')
+        logger_.info('Connection to DB established')
         return conn
     except Exception as e:
-        logger.exception('Exception while connecting to DB', e)
+        logger_.exception('Exception while connecting to DB', e)
         return None
     
 
 def main():
-    '''This function will initialize the logger, as well as the other modules. '''
+    """This function will initialize the logger, as well as the other modules. """
     geo = config.WINDOW_GEOMETRY # shortened the window geometry variable for a cleaner line later
     resize = config.WINDOW_RESIZEABLE
     # configure logger
@@ -53,6 +53,7 @@ def main():
     # close the DB connection
     conn.close()
     log.info('DB Connection Closed')
+
 
 if __name__ == '__main__':
     main()

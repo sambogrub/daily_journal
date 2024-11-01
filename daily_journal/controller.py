@@ -1,17 +1,16 @@
-'''this is the module that will hold the controller for the daily journal app'''
+"""this is the module that will hold the controller for the daily journal app"""
 import model
 import ui
 
 import datetime
+
+
 class Controller:
-    '''Controller for Daily Journal. Will be responsible for interactions with the repository,
-    passing entry objects between ui and the repository'''
+    """Controller for Daily Journal. Will be responsible for interactions with the repository,
+    passing entry objects between ui and the repository"""
     def __init__(self, repository, root):
         self.datacontroller = DataController(repository)
         self.ui = ui.MainPage(root)
-
-
-        
 
     def app_start(self):
         # this function will call all needed functions to start the app. 
@@ -33,6 +32,6 @@ class Controller:
 
 
 class DataController:
-    '''This controller will interact with the repository and pass data to the main controller'''
+    """This controller will interact with the repository and pass data to the main controller"""
     def __init__(self, repository):
         self.entries = repository

@@ -1,12 +1,13 @@
-'''Module will hold the entries repository, as well as the table initialization function'''
+"""Module will hold the entries repository, as well as the table initialization function"""
 
 import sqlite3
 import logger
 
 from config import ENTRIES_TABLE
 
-def init_entries_table(conn: sqlite3.Connection, logger: logger):
-    '''This initializes the entries table'''
+
+def init_entries_table(conn: sqlite3.Connection, logger: logger.logging.Logger) -> None:
+    """This initializes the entries table"""
     entries_query = f'''
     CREATE TABLE IF NOT EXISTS {ENTRIES_TABLE} (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,19 +20,24 @@ def init_entries_table(conn: sqlite3.Connection, logger: logger):
         cursor = conn.cursor()
         cursor.execute(entries_query)
         conn.commit()
-    except sqlite3.IntegrityError as e:
+    except sqlite3.IntegrityError:
         conn.rollback()
-        logger.exception('SQLite error: %s', e)
-    except Exception as e:
+        logger.exception('SQLite error:')
+    except Exception:
         conn.rollback()
-        logger.exception('SQLite error: %s', e)
+        logger.exception('SQLite error:')
         raise
     finally:
         cursor.close()
 
+
 class Entries:
     def __init__(self, db_conn):
         self.conn = db_conn
+
+        #get the logger
         self.logger = logger.journal_logger()
+        
+        #initialize the tables
         init_entries_table(self.conn, self.logger)
         

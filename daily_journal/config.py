@@ -2,10 +2,10 @@
 WINDOW_GEOMETRY = (500,800,150,150)
 WINDOW_RESIZEABLE = (False,False)
 
+
 # DB section
 DB_NAME = 'journal.db'
 ENTRIES_TABLE = 'entries'
-
 
 
 # Logging section
