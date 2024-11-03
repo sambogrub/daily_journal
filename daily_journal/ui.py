@@ -23,12 +23,14 @@ class MainPage(ttk.Frame):
         self.populate_frame()
 
     def set_date_str(self):
+        #this sets the tk.stringvar to the currently focused date
         self.date_str.set(self.cont.get_focus_date_str())
 
     def populate_frame(self):
         #this populates the frame with the date, text entry box, save entry button, as well as the calendar page button
         self.date_label = ttk.Label(self,textvariable=self.date_str)
 
+        #place the widgets
         self.date_label.place(anchor = 'n', relx = .5, y = 0, width = 150, height = 40)
         
 

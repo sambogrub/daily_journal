@@ -46,11 +46,11 @@ class Controller:
         #This sets the focus date fo the journal entry, will set it to 'today's' date if none is provided
         self._focus_date = date
 
-    def get_focus_date(self):
+    def get_focus_date(self) -> datetime.date:
         #this returns the currently focused date
         return self._focus_date
 
-    def get_focus_date_str(self):
+    def get_focus_date_str(self) ->str:
         month_str = cal.month_name[self._focus_date.month]
         date_str = f'{month_str} {self._focus_date.day}, {self._focus_date.year}'
         return date_str
