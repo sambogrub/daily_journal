@@ -4,6 +4,7 @@ import ui
 
 import datetime
 import tkinter as tk
+import calendar as cal
 
 class Controller:
     """Controller for Daily Journal. Will be responsible for interactions with the repository,
@@ -11,6 +12,10 @@ class Controller:
     def __init__(self, repository_, root: tk.Tk):
         self.datacontroller = DataController(repository_)
         self.root = root
+
+        #set the initial focus date before ui is initialized
+        self.set_focus_date()
+
         self.ui_pages = self.init_ui_pages()
 
         #start building the app
@@ -32,9 +37,23 @@ class Controller:
         return pages
     
     def show_page(self, page_name):
+        #This raises the indicated page to the top of the view
         page = self.ui_pages.get(page_name)
         if page:
             page.tkraise()
+
+    def set_focus_date(self, date:datetime.date = datetime.date.today()):
+        #This sets the focus date fo the journal entry, will set it to 'today's' date if none is provided
+        self._focus_date = date
+
+    def get_focus_date(self):
+        #this returns the currently focused date
+        return self._focus_date
+
+    def get_focus_date_str(self):
+        month_str = cal.month_name[self._focus_date.month]
+        date_str = f'{month_str} {self._focus_date.day}, {self._focus_date.year}'
+        return date_str
 
     def init_new_entry(self, date: datetime, text: str = None) -> object: #returns a new entry object
         # this function will create a new entry with the given date. 
