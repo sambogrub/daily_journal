@@ -4,12 +4,33 @@ import tkinter as tk
 from tkinter import ttk
 
 
+class StyleManager:
+    """This holds the configurations of the ttk styles used throughout the ui. 
+    The separate class solely for styles, should help with readability and redundancy"""
+    def __init__(self, root):
+        self.root = root
+
+        #initialize style instance
+        self.style = ttk.Style(self.root)
+
+        #set basic style to be used
+        self.style.theme_use('alt')
+        
+        #call the style configuration function
+        self.configure_styles()
+
+    def configure_styles(self):
+        #will be called to set specific styles for the app
+        pass
+
+
 class MainPage(ttk.Frame):
     """This is the main page, has a basic layout of date, text entry box, and a save entry button.
     This will also have the button to get to the calendar page"""
     def __init__(self, root, controller_):
         #initialize the frame inheritance
         super().__init__(root)
+
         #place the main page frame
         self.place(x = 0, y = 0, relwidth=1, relheight=1)
 

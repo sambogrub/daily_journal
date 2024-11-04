@@ -6,6 +6,7 @@ import controller
 import repository
 import logger 
 import config
+from ui import StyleManager
 
 import tkinter as tk
 from tkinter import ttk
@@ -37,6 +38,9 @@ def main():
     root.geometry(f'{geo[0]}x{geo[1]}+{geo[2]}+{geo[3]}')
     root.resizable(resize[0],resize[1])
     root.title('Daily Journal')
+
+    #initialize style manager directly to root
+    _stylemanager = StyleManager(root)
 
     #initialize DB connection
     conn = db_connection(log)
