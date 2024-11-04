@@ -86,7 +86,7 @@ class CalendarPage(ttk.Frame):
 
         #place the widgets
         self.calendar_label.place(anchor = 'n', relx = .5, y = 5, width = 200, height = 40)
-        self.calendar_frame.place(anchor = 'center', relx = .5, rely =.4, relwidth=.7, relheight = .7)
+        self.calendar_frame.place(anchor = 'center', relx = .5, rely =.25, width = 300, height = 300)
 
     def populate_calendar_frame(self):
         #clear the calendar frame
@@ -109,7 +109,7 @@ class CalendarPage(ttk.Frame):
         for r, week in enumerate(self.calendar_matrix):
             for c, button in enumerate(week):
                 if button is not None:
-                    button.grid(row = r+1, column = c)
+                    button.grid(row = r+1, column = c, sticky = 'nsew')
         
     def build_calendar_matrix(self) -> list:
         ref_cal_matrix = self.cont.calendar_matrix
