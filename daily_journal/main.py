@@ -15,10 +15,13 @@ import sqlite3
 
 def db_connection(logger_:logger.logging.Logger) -> sqlite3.Connection|None:
     try:
+        #try to connect to the db
         conn = sqlite3.connect(config.DB_NAME)
         logger_.info('Connection to DB established')
         return conn
+    
     except Exception as e:
+        #log failure if it happens
         logger_.exception('Exception while connecting to DB', e)
         return None
     
