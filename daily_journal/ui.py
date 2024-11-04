@@ -29,9 +29,15 @@ class MainPage(ttk.Frame):
     def populate_frame(self):
         #this populates the frame with the date, text entry box, save entry button, as well as the calendar page button
         self.date_label = ttk.Label(self,textvariable=self.date_str)
+        self.cal_page_button = ttk.Button(self, text = 'Cal Page', command = lambda: self.cont.show_page('calendar'))
+        self.entry_textbox = tk.Text(self)
+        self.save_entry_button = ttk.Button(self, text = 'Save Entry')
 
         #place the widgets
         self.date_label.place(anchor = 'n', relx = .5, y = 0, width = 150, height = 40)
+        self.cal_page_button.place(anchor = 'ne', relx = .995, y = 0, width = 100, height = 40)
+        self.entry_textbox.place(anchor = 'n', relx = .5, y = 45, relwidth= 1, relheight=.88)
+        self.save_entry_button.place(anchor = 's', relx=.5, rely=.99, width = 125, height = 40)
         
 
 class CalendarPage(ttk.Frame):
@@ -41,7 +47,17 @@ class CalendarPage(ttk.Frame):
          #initialize the frame inheritance
         super().__init__(root)
         #place the main page frame
-        self.place(x = 0, y = 0, relwidth=1, relheight=1)
+        self.place(anchor = 'ne',relx=1, y = 0, relwidth=.85, relheight=1)
+
+        #call the populate frame function
+        self.populate_frame()
+
+    def populate_frame(self):
+        #this will populate the calendar page frame
+        self.calendar_label = ttk.Label(self, text= 'This is a quick test of the page change')
+
+        #place the widgets
+        self.calendar_label.place(anchor = 'n', relx = .5, y = 5, width = 200, height = 40)
         
 
 class OptionsPage(ttk.Frame):
