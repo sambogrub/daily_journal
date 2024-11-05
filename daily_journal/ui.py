@@ -1,4 +1,4 @@
-'''This module will contain the main UI classes; today's page (main page), calendar page, and settings page'''
+"""This module will contain the main UI classes; today's page (main page), calendar page, and settings page"""
 
 import tkinter as tk
 from tkinter import ttk
@@ -106,10 +106,10 @@ class CalendarPage(ttk.Frame):
         for i,day in enumerate(days):
             ttk.Label(self.calendar_frame, text = day).grid(row = 0, column = i)
 
-        for r, week in enumerate(self.calendar_matrix):
+        for r, week in enumerate(self.calendar_matrix, start = 1):
             for c, button in enumerate(week):
                 if button is not None:
-                    button.grid(row = r+1, column = c, sticky = 'nsew')
+                    button.grid(row = r, column = c, sticky = 'nsew')
         
     def build_calendar_matrix(self) -> list:
         ref_cal_matrix = self.cont.calendar_matrix
@@ -136,3 +136,4 @@ class OptionsPage(ttk.Frame):
         super().__init__(root)
         #place the main page frame
         self.place(x = 0, y = 0, relwidth=1, relheight=1)
+        

@@ -6,7 +6,7 @@ import logger
 from config import ENTRIES_TABLE
 
 
-def init_entries_table(conn: sqlite3.Connection, logger: logger.logging.Logger) -> None:
+def init_entries_table(conn: sqlite3.Connection, logger_: logger.logging.Logger) -> None:
     """This initializes the entries table"""
     entries_query = f'''
     CREATE TABLE IF NOT EXISTS {ENTRIES_TABLE} (
@@ -16,19 +16,21 @@ def init_entries_table(conn: sqlite3.Connection, logger: logger.logging.Logger) 
     )'''
 
     # create the table, logging any basic error
+    cursor = None
     try:
         cursor = conn.cursor()
         cursor.execute(entries_query)
         conn.commit()
     except sqlite3.IntegrityError:
         conn.rollback()
-        logger.exception('SQLite error:')
+        logger_.exception('SQLite error:')
     except Exception:
         conn.rollback()
-        logger.exception('SQLite error:')
+        logger_.exception('SQLite error:')
         raise
     finally:
-        cursor.close()
+        if cursor is not None:
+            cursor.close()
 
 
 class Entries:

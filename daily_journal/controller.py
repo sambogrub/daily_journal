@@ -10,7 +10,7 @@ class Controller:
     """Controller for Daily Journal. Will be responsible for interactions with the repository,
     passing entry objects between ui and the repository"""
     def __init__(self, repository_, root: tk.Tk):
-        self.datacontroller = DataController(repository_)
+        self.data_controller = DataController(repository_)
         self.root = root
 
         #set the initial focus date and calendar matrix before ui is initialized
@@ -42,7 +42,7 @@ class Controller:
         if page:
             page.tkraise()
 
-    def set_focus_date_and_month(self, date:datetime.date = datetime.date.today()):
+    def set_focus_date_and_month(self, date: datetime.date = datetime.date.today()):
         #This sets the focus date fo the journal entry, will set it to 'today's' date if none is provided
         self._focus_date = date
         self.calendar_matrix = self.build_calendar_matrix()
