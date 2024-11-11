@@ -112,7 +112,7 @@ class CalendarPage(ttk.Frame):
                     button.grid(row = r, column = c, sticky = 'nsew')
         
     def build_calendar_matrix(self) -> list:
-        ref_cal_matrix = self.cont.calendar_matrix
+        ref_cal_matrix = self.cont.get_month_cal()
         
         calendar_matrix = []
         for week in ref_cal_matrix:
@@ -122,7 +122,7 @@ class CalendarPage(ttk.Frame):
                 if day == 0:
                     new_week.append(None)
                 else:
-                    button = ttk.Button(self.calendar_frame, text = day)
+                    button = ttk.Button(self.calendar_frame, text = day.day_num)
                     new_week.append(button)
             calendar_matrix.append(new_week)
         return calendar_matrix

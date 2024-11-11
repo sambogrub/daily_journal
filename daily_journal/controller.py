@@ -14,7 +14,8 @@ class Controller:
         self.root = root
 
         #set the initial focus date and calendar matrix before ui is initialized
-        self.set_focus_date_and_month()
+        self.set_focus_date()
+        self.set_focus_month()
 
         self.ui_pages = self.init_ui_pages()
 
@@ -42,27 +43,29 @@ class Controller:
         if page:
             page.tkraise()
 
-    def set_focus_date_and_month(self, date: datetime.date = datetime.date.today()):
+    def set_focus_date(self, date: datetime.date = datetime.date.today()):
         #This sets the focus date fo the journal entry, will set it to 'today's' date if none is provided
         self._focus_date = date
-        self.calendar_matrix = self.build_calendar_matrix()
         
+    def set_focus_month(self):
+        #This gets the month object that is focused on at the moment
+        month_num = self._focus_date.month
+        year = self._focus_date.year
+        self._focus_month = model.Month(month_num, year)
+
     def get_focus_date(self) -> datetime.date:
         #this returns the currently focused date
         return self._focus_date
+    
+    def get_month_cal(self):
+        #this returns the current month calendar matrix
+        return self._focus_month.month_matrix
 
     def get_focus_date_str(self) ->str:
         #returns a string of the date in 'MonthName Day, Year' format
         month_str = cal.month_name[self._focus_date.month]
         date_str = f'{month_str} {self._focus_date.day}, {self._focus_date.year}'
         return date_str
-
-    def build_calendar_matrix(self) -> list:
-        #pull the day matrix from the calendar library
-        month_matrix = cal.monthcalendar(self._focus_date.year, self._focus_date.month)
-        if len(month_matrix) < 6:
-            month_matrix.append([0,0,0,0,0,0,0])
-        return month_matrix
 
     def init_new_entry(self, date: datetime, text: str = None) -> object: #returns a new entry object
         # this function will create a new entry with the given date. 
