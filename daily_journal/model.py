@@ -2,13 +2,6 @@ import datetime
 import calendar as cal
 
 
-class Entry:
-    """Basic Entry class. Will hold the date and text for each entry"""
-    def __init__(self, date: datetime, text: str = None):
-        self.date = date
-        self.text = text
-
-
 class Day:
     """Day class to hold all entries and future parts"""
     def __init__(self, day_num: int):
