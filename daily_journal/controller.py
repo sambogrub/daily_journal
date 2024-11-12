@@ -67,6 +67,14 @@ class Controller:
         date_str = f'{month_str} {self._focus_date.day}, {self._focus_date.year}'
         return date_str
 
+    def calendar_button_clicked(self, i, j):
+        #pulls the specific date referenced from the button calendar, and passes the date from the clicked day to the 
+        #set focus date function
+        day = self._focus_month.month_matrix[i][j]
+        self.set_focus_date(day.date)
+        self.ui_pages['main'].set_date_str()
+        self.show_page('main')
+
     def init_new_entry(self, date: datetime, text: str = None) -> object: #returns a new entry object
         # this function will create a new entry with the given date. 
         pass

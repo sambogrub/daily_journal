@@ -2,6 +2,7 @@
 
 import tkinter as tk
 from tkinter import ttk
+from functools import partial
 
 
 class StyleManager:
@@ -106,23 +107,24 @@ class CalendarPage(ttk.Frame):
         for i,day in enumerate(days):
             ttk.Label(self.calendar_frame, text = day).grid(row = 0, column = i)
 
+        #grid the calendar buttons from the calendar matrix
         for r, week in enumerate(self.calendar_matrix, start = 1):
             for c, button in enumerate(week):
                 if button is not None:
                     button.grid(row = r, column = c, sticky = 'nsew')
         
-    def build_calendar_matrix(self) -> list:
+    def build_calendar_matrix(self) -> list[list]:
         ref_cal_matrix = self.cont.get_month_cal()
         
         calendar_matrix = []
-        for week in ref_cal_matrix:
+        for i, week in enumerate(ref_cal_matrix):
             new_week = []
-            for day in week:
+            for j, day in enumerate(week):
                 
                 if day == 0:
                     new_week.append(None)
                 else:
-                    button = ttk.Button(self.calendar_frame, text = day.day_num)
+                    button = ttk.Button(self.calendar_frame, text = day.date.day, command = partial(self.cont.calendar_button_clicked, i, j))
                     new_week.append(button)
             calendar_matrix.append(new_week)
         return calendar_matrix
