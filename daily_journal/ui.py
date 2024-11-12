@@ -28,7 +28,7 @@ class StyleManager:
 class MainPage(ttk.Frame):
     """This is the main page, has a basic layout of date, text entry box, and a save entry button.
     This will also have the button to get to the calendar page"""
-    def __init__(self, root, controller_):
+    def __init__(self, root, controller_, init_day):
         #initialize the frame inheritance
         super().__init__(root)
 
@@ -41,12 +41,16 @@ class MainPage(ttk.Frame):
         #initialize tk variables
         self.date_str = tk.StringVar()
 
-        self.set_date_str()
+        self.init_day_info(init_day)
         self.populate_frame()
+    
+    def init_day_info(self, day):
+        #this takes the day object and passes the needed info to the proper locations
+        self.set_date_str(day)
 
-    def set_date_str(self):
+    def set_date_str(self, day):
         #this sets the tk.stringvar to the currently focused date
-        self.date_str.set(self.cont.get_focus_date_str())
+        self.date_str.set(day.date_string)
 
     def populate_frame(self):
         #this populates the frame with the date, text entry box, save entry button, as well as the calendar page button
@@ -74,24 +78,58 @@ class CalendarPage(ttk.Frame):
         #name the passed controller instance
         self.cont = controller_
 
+        #set the variable for the month label
+        self.month_name_var = tk.StringVar()
+        self.set_month_name_var()
+        
+
+
         #call the populate frame function
         self.populate_frame()
 
     def populate_frame(self):
         #this will populate the calendar page frame
-        self.calendar_label = ttk.Label(self, text= 'This is a quick test of the page change')
-        self.calendar_frame = ttk.Frame(self)
-
-        #populate the calendar days and frame
-        self.populate_calendar_frame()
+        self.calendar_label = ttk.Label(self, textvariable=self.month_name_var)
+        self.prev_month_button = ttk.Button(self, text = 'Prev', command = self.reverse_calendar)
+        self.next_month_button = ttk.Button(self, text = 'Next', command = self.advance_calendar)
+        self.calendar_frame = CalendarFrame(self, self.cont)
 
         #place the widgets
-        self.calendar_label.place(anchor = 'n', relx = .5, y = 5, width = 200, height = 40)
+        self.calendar_label.place(anchor = 'n', relx = .5, y = 5, width = 100, height = 40)
         self.calendar_frame.place(anchor = 'center', relx = .5, rely =.25, width = 300, height = 300)
+        self.prev_month_button.place(anchor = 'n', relx = .25, y = 5, width = 75, height = 40)
+        self.next_month_button.place(anchor = 'n', relx = .75, y = 5, width = 75, height = 40)
+
+    def advance_calendar(self):
+        self.cont.adv_focus_month()   
+        self.set_month_name_var()
+        self.calendar_frame.populate_calendar_frame()
+
+    def reverse_calendar(self):
+        self.cont.rev_focus_month()   
+        self.set_month_name_var()
+        self.calendar_frame.populate_calendar_frame()
+
+    def set_month_name_var(self):
+        #this sets the month name variable to the currently focused month
+        self.month_name_var.set(self.cont.get_month_name())
+
+  
+        
+
+class CalendarFrame(ttk.Frame):
+    """this class holds the building and populating of the calendar frame for the calendar page"""
+    def __init__(self, parent, controller_):
+        #initialize the inheritance attributes
+        super().__init__(parent)
+        
+        self.cont = controller_
+
+        self.populate_calendar_frame()
 
     def populate_calendar_frame(self):
         #clear the calendar frame
-        for widget in self.calendar_frame.winfo_children():
+        for widget in self.winfo_children():
             widget.destroy()
 
         #get the calendar button matrix
@@ -99,13 +137,13 @@ class CalendarPage(ttk.Frame):
         
         #set row and column weight to keep size uniform
         for i in range(7):
-            self.calendar_frame.grid_columnconfigure(i,weight = 1, uniform = 'calendar_column')
-            self.calendar_frame.grid_rowconfigure(i, weight = 1, uniform = 'calendar_row')
+            self.grid_columnconfigure(i,weight = 1, uniform = 'calendar_column')
+            self.grid_rowconfigure(i, weight = 1, uniform = 'calendar_row')
 
         #build and grid the days of the week labels        
         days = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun']
         for i,day in enumerate(days):
-            ttk.Label(self.calendar_frame, text = day).grid(row = 0, column = i)
+            ttk.Label(self, text = day).grid(row = 0, column = i)
 
         #grid the calendar buttons from the calendar matrix
         for r, week in enumerate(self.calendar_matrix, start = 1):
@@ -124,11 +162,10 @@ class CalendarPage(ttk.Frame):
                 if day == 0:
                     new_week.append(None)
                 else:
-                    button = ttk.Button(self.calendar_frame, text = day.date.day, command = partial(self.cont.calendar_button_clicked, i, j))
+                    button = ttk.Button(self, text = day.date.day, command = partial(self.cont.calendar_button_clicked, i, j))
                     new_week.append(button)
             calendar_matrix.append(new_week)
         return calendar_matrix
-        
 
 class OptionsPage(ttk.Frame):
     """This is the third page. It will have the basic options that can be changed.

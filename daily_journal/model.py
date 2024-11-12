@@ -7,6 +7,10 @@ class Day:
     def __init__(self, date: datetime.date):
         self.date = date
         self.entry = ''
+        self.date_string = self.get_date_string()
+    
+    def get_date_string(self):
+        return datetime.datetime.strftime(self.date, '%B %d, %Y')
 
 
 class Month:
@@ -15,6 +19,7 @@ class Month:
         self.month_num = month_num
         self.year = year
         self.month_matrix = self.build_calendar_matrix()
+        self.month_name = self.set_month_name() 
 
     def build_calendar_matrix(self):
         month_matrix = cal.monthcalendar(self.year, self.month_num)
@@ -26,6 +31,10 @@ class Month:
                     date = datetime.date(self.year, self.month_num, day_num)
                     month_matrix[i][j] = Day(date)
         return month_matrix
+    
+    def set_month_name(self):
+        #this sets the string name for the month
+        return cal.month_name[self.month_num]
     
 
     

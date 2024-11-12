@@ -5,6 +5,7 @@ import ui
 import datetime
 import tkinter as tk
 import calendar as cal
+from dateutil.relativedelta import relativedelta
 
 class Controller:
     """Controller for Daily Journal. Will be responsible for interactions with the repository,
@@ -14,10 +15,12 @@ class Controller:
         self.root = root
 
         #set the initial focus date and calendar matrix before ui is initialized
-        self.set_focus_date()
-        self.set_focus_month()
+        self._focus_date = self.set_focus_date()
+        self._focus_month = self.set_focus_month(self._focus_date)
 
-        self.ui_pages = self.init_ui_pages()
+        init_day = self.get_init_day()
+
+        self.ui_pages = self.init_ui_pages(init_day)
 
         #start building the app
         self.app_start()
@@ -28,10 +31,10 @@ class Controller:
         # and it will call to start the UI.
         self.show_page('main')
 
-    def init_ui_pages(self) -> dict:
+    def init_ui_pages(self, init_day: datetime.date) -> dict:
         #this initializes the ui pages to be called when needed
         pages = {
-            'main': ui.MainPage(self.root, self),
+            'main': ui.MainPage(self.root, self, init_day),
             'calendar': ui.CalendarPage(self.root, self),
             'options': ui.OptionsPage(self.root, self)
         }
@@ -45,13 +48,12 @@ class Controller:
 
     def set_focus_date(self, date: datetime.date = datetime.date.today()):
         #This sets the focus date fo the journal entry, will set it to 'today's' date if none is provided
-        self._focus_date = date
+        return date
         
-    def set_focus_month(self):
+    def set_focus_month(self, date):
         #This gets the month object that is focused on at the moment
-        month_num = self._focus_date.month
-        year = self._focus_date.year
-        self._focus_month = model.Month(month_num, year)
+        
+        return model.Month(date.month, date.year)
 
     def get_focus_date(self) -> datetime.date:
         #this returns the currently focused date
@@ -60,6 +62,10 @@ class Controller:
     def get_month_cal(self):
         #this returns the current month calendar matrix
         return self._focus_month.month_matrix
+    
+    def get_month_name(self) -> str:
+        #this returns the current focused month's name 
+        return self._focus_month.month_name
 
     def get_focus_date_str(self) ->str:
         #returns a string of the date in 'MonthName Day, Year' format
@@ -67,13 +73,33 @@ class Controller:
         date_str = f'{month_str} {self._focus_date.day}, {self._focus_date.year}'
         return date_str
 
+    def adv_focus_month(self):
+        #advances the focus month by one
+        cur_date = datetime.date(self._focus_month.year, self._focus_month.month_num, 1)
+        next_month = cur_date + relativedelta(months = 1)
+        self._focus_month = self.set_focus_month(next_month)
+
+    def rev_focus_month(self):
+        #advances the focus month by one
+        cur_date = datetime.date(self._focus_month.year, self._focus_month.month_num, 1)
+        next_month = cur_date + relativedelta(months = -1)
+        self._focus_month = self.set_focus_month(next_month)
+        
     def calendar_button_clicked(self, i, j):
         #pulls the specific date referenced from the button calendar, and passes the date from the clicked day to the 
         #set focus date function
         day = self._focus_month.month_matrix[i][j]
         self.set_focus_date(day.date)
-        self.ui_pages['main'].set_date_str()
+        self.ui_pages['main'].init_day_info(day)
         self.show_page('main')
+
+    def get_init_day(self):
+        #this gets the intial day object
+        for week in self._focus_month.month_matrix:
+            for day in week:
+                if day != 0:
+                    if day.date.day == self._focus_date.day:
+                        return day
 
     def init_new_entry(self, date: datetime, text: str = None) -> object: #returns a new entry object
         # this function will create a new entry with the given date. 
