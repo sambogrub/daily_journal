@@ -1,6 +1,6 @@
 # UI section
-WINDOW_GEOMETRY = (500,800,150,100)
-WINDOW_RESIZEABLE = (False,False)
+WINDOW_GEOMETRY = '500x800+150+100' # window size of 500 by 800; top corner at 150,100
+WINDOW_RESIZEABLE = (False, False)
 
 
 # DB section

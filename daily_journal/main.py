@@ -1,67 +1,57 @@
 """Main module for daily journal app. Will initialize the controller,
 passing it both the repository and the ui"""
 
-import model
-import controller
-import repository
-import logger 
+import sqlite3
+import tkinter as tk
+
 import config
+import controller
+import logger
+import repository
 from ui import StyleManager
 
-import tkinter as tk
-from tkinter import ttk
-import sqlite3
 
-
-def db_connection(logger_:logger.logging.Logger) -> sqlite3.Connection|None:
+def db_connection(logger_: logger.logging.Logger) -> sqlite3.Connection:
     try:
-        #try to connect to the db
         conn = sqlite3.connect(config.DB_NAME)
         logger_.info('Connection to DB established')
-        return conn
-    
-    except Exception as e:
-        #log failure if it happens
-        logger_.exception('Exception while connecting to DB', e)
-        return None
-    
+    except sqlite3.Error:
+        logger_.exception('Exception while connecting to DB')
+        raise
+    return conn
+
 
 def main():
     """This function will initialize the logger, as well as the other modules. """
-    geo = config.WINDOW_GEOMETRY # shortened the window geometry variable for a cleaner line later
-    resize = config.WINDOW_RESIZEABLE
-    # configure logger
+
     logger.configure_logger()
+    logger_ = logger.journal_logger()
 
-    #get the logger object to pass around
-    log = logger.journal_logger()
-
-    #initialize the tkinter window
+    # initialize the tkinter window TODO: because ...
     root = tk.Tk()
-    root.geometry(f'{geo[0]}x{geo[1]}+{geo[2]}+{geo[3]}')
-    root.resizable(resize[0],resize[1])
-    root.title('Daily Journal')
+    root.geometry(config.WINDOW_GEOMETRY)
+    root.resizable(*config.WINDOW_RESIZEABLE)
+    root.title('Daily Journal') # TODO: Window geometry is in config. Why not title?
 
-    #initialize style manager directly to root
-    _stylemanager = StyleManager(root)
+    # initialize style manager directly to root TODO: because ...
+    style_manager = StyleManager(root)
 
-    #initialize DB connection
-    conn = db_connection(log)
+    # TODO: add modal dialog informing end-user about DB error?
+    conn = db_connection(logger_)
 
-    #initialize the repository
-    app = controller.Controller(
-        repository_ = repository.Entries(conn),
-        root = root
-    )
+    try:
+        # initialize the repository TODO: because ...
+        app = controller.Controller(
+            repository_ = repository.Entries(conn),
+            root = root
+        )
 
-    #run the main loop for the UI
-    root.mainloop()
-
-    # close the DB connection
-    conn.close()
-    log.info('DB Connection Closed')
+        # run the main loop for the UI TODO: because ...
+        root.mainloop()
+    finally:
+        conn.close()
+        logger_.info('DB Connection Closed')
 
 
 if __name__ == '__main__':
     main()
-    
