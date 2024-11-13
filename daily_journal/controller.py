@@ -18,9 +18,9 @@ class Controller:
         self._focus_date = self.set_focus_date()
         self._focus_month = self.set_focus_month(self._focus_date)
 
-        init_day = self.get_init_day()
+        self._focus_day = self.get_init_day()
 
-        self.ui_pages = self.init_ui_pages(init_day)
+        self.ui_pages = self.init_ui_pages(self._focus_day)
 
         #start building the app
         self.app_start()
@@ -65,7 +65,7 @@ class Controller:
     
     def get_month_name(self) -> str:
         #this returns the current focused month's name 
-        return self._focus_month.month_name
+        return f'{self._focus_month.month_name} {self._focus_month.year}'
 
     def get_focus_date_str(self) ->str:
         #returns a string of the date in 'MonthName Day, Year' format
@@ -89,6 +89,7 @@ class Controller:
         #pulls the specific date referenced from the button calendar, and passes the date from the clicked day to the 
         #set focus date function
         day = self._focus_month.month_matrix[i][j]
+        self._focus_day = day
         self.set_focus_date(day.date)
         self.ui_pages['main'].init_day_info(day)
         self.show_page('main')
@@ -101,20 +102,18 @@ class Controller:
                     if day.date.day == self._focus_date.day:
                         return day
 
-    def init_new_entry(self, date: datetime, text: str = None) -> object: #returns a new entry object
-        # this function will create a new entry with the given date. 
-        pass
-
-    def assign_db_text_to_entry(self, entry) -> object: # returns the same entry object with a possible entry text
-        # this function will get the text from the repository for the entry's date, if any exists
-        pass
-
-    def assign_ui_text_to_entry(self, entry, text) -> object:
-        #this function will assign the given text from the ui textbox to the 
-        pass
+    def save_day(self):
+        #this passes the day object to the data controller to pull the needed data and pass it to the repository
+        self.data_controller.save_entry(self._focus_day)
+    
 
 
 class DataController:
     """This controller will interact with the repository and pass data to the main controller"""
     def __init__(self, repository_):
         self.entries = repository_
+
+    def save_entry(self, day):
+        date = day.date
+        entry = day.entry
+        self.entries.store_entry(date, entry)

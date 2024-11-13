@@ -95,7 +95,7 @@ class CalendarPage(ttk.Frame):
         self.calendar_frame = CalendarFrame(self, self.cont)
 
         #place the widgets
-        self.calendar_label.place(anchor = 'n', relx = .5, y = 5, width = 100, height = 40)
+        self.calendar_label.place(anchor = 'n', relx = .5, y = 5, width = 120, height = 40)
         self.calendar_frame.place(anchor = 'center', relx = .5, rely =.25, width = 300, height = 300)
         self.prev_month_button.place(anchor = 'n', relx = .25, y = 5, width = 75, height = 40)
         self.next_month_button.place(anchor = 'n', relx = .75, y = 5, width = 75, height = 40)

@@ -1,5 +1,5 @@
 # UI section
-WINDOW_GEOMETRY = (500,800,150,100)
+WINDOW_GEOMETRY = '500x800+150+100' #500px wide by 800px tall, top left corner is at coord 150x,100y
 WINDOW_RESIZEABLE = (False,False)
 
 

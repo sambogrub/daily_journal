@@ -1,6 +1,11 @@
 """Main module for daily journal app. Will initialize the controller,
 passing it both the repository and the ui"""
 
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+import sqlite3
+
 import model
 import controller
 import repository
@@ -8,58 +13,63 @@ import logger
 import config
 from ui import StyleManager
 
-import tkinter as tk
-from tkinter import ttk
-import sqlite3
 
-
-def db_connection(logger_:logger.logging.Logger) -> sqlite3.Connection|None:
+def db_connection(logger_:logger.logging.Logger) -> sqlite3.Connection:
+    """initialize the db connection at the beginning so that it can be passed around as needed,
+    rather than opening and closing multiple times throughout the app"""
     try:
-        #try to connect to the db
         conn = sqlite3.connect(config.DB_NAME)
         logger_.info('Connection to DB established')
-        return conn
-    
-    except Exception as e:
-        #log failure if it happens
-        logger_.exception('Exception while connecting to DB', e)
-        return None
+
+    except sqlite3.Error:
+        logger_.exception('Error while connecting to DB')
+        #let the end user know that there was an error with the connection
+        db_connection_error('An error occurred while connecting to the database. \nThe app needs to restart.') 
+        #still pass the error along so that the app stops properly
+        raise
+
+    return conn 
+
+def db_connection_error(message: str):
+    """This function shows a popup error window if the database connection has an issue"""
+    root = tk.TK()
+    root.withdraw()
+    messagebox.showerror('Application error ', message)
+    root.destroy()
     
 
 def main():
-    """This function will initialize the logger, as well as the other modules. """
-    geo = config.WINDOW_GEOMETRY # shortened the window geometry variable for a cleaner line later
-    resize = config.WINDOW_RESIZEABLE
-    # configure logger
+    """This function will initialize the logger, as well as the other modules. """ 
+    #this sets up the logger at the very beginning of the app so when a logger instance is called its
+    #the same logger every time
     logger.configure_logger()
-
-    #get the logger object to pass around
     log = logger.journal_logger()
 
-    #initialize the tkinter window
-    root = tk.Tk()
-    root.geometry(f'{geo[0]}x{geo[1]}+{geo[2]}+{geo[3]}')
-    root.resizable(resize[0],resize[1])
-    root.title('Daily Journal')
-
-    #initialize style manager directly to root
-    _stylemanager = StyleManager(root)
-
-    #initialize DB connection
+    #initialize DB connection here to catch any errors with connecting to the database,
+    #stopping the rest of the app initialization 
     conn = db_connection(log)
 
-    #initialize the repository
-    app = controller.Controller(
-        repository_ = repository.Entries(conn),
-        root = root
-    )
+    #initialize the tkinter window in main so the root window is 
+    # passed to all needed modules through controller
+    root = tk.Tk()
+    root.geometry(config.WINDOW_GEOMETRY)
+    root.resizable(*config.WINDOW_RESIZEABLE)
+    root.title('Daily Journal')
 
-    #run the main loop for the UI
-    root.mainloop()
+    #Initialize the stylemanager here to have it attach to the root window at the beginning
+    _stylemanager = StyleManager(root)
 
-    # close the DB connection
-    conn.close()
-    log.info('DB Connection Closed')
+    try:
+        app = controller.Controller(
+            repository_ = repository.Entries(conn),
+            root = root
+        )
+        #run the main loop for the UI after the the business logic is initialized
+        root.mainloop()
+    finally:
+        # the connection close is done here to ensure that the connection is closed properly when the app closes
+        conn.close()
+        log.info('DB Connection Closed')
 
 
 if __name__ == '__main__':
