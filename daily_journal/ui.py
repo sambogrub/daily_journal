@@ -112,7 +112,7 @@ class CalendarPage(ttk.Frame):
 
     def set_month_name_var(self):
         #this sets the month name variable to the currently focused month
-        self.month_name_var.set(self.cont.get_month_name())
+        self.month_name_var.set(self.cont.get_month_year_str())
 
   
         

@@ -14,7 +14,7 @@ import config
 from ui import StyleManager
 
 
-def db_connection(logger_:logger.logging.Logger) -> sqlite3.Connection:
+def db_connection(logger_: logger.logging.Logger) -> sqlite3.Connection:
     """initialize the db connection at the beginning so that it can be passed around as needed,
     rather than opening and closing multiple times throughout the app"""
     try:
@@ -57,7 +57,7 @@ def main():
     root.title('Daily Journal')
 
     #Initialize the stylemanager here to have it attach to the root window at the beginning
-    _stylemanager = StyleManager(root)
+    _style_manager = StyleManager(root)
 
     try:
         app = controller.Controller(
