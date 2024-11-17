@@ -19,7 +19,8 @@ class Month:
         self.month_num = month_num
         self.year = year
         self.month_matrix = self.build_calendar_matrix()
-        self.month_name = self.set_month_name() 
+        self.month_name = self.set_month_name()
+        self.last_day = 0
 
     def build_calendar_matrix(self):
         month_matrix = cal.monthcalendar(self.year, self.month_num)
@@ -28,6 +29,7 @@ class Month:
         for i, week in enumerate(month_matrix):
             for j, day_num in enumerate(week):
                 if day_num != 0:
+                    self.last_day = day_num
                     date = datetime.date(self.year, self.month_num, day_num)
                     month_matrix[i][j] = Day(date)
         return month_matrix

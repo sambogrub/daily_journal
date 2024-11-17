@@ -17,11 +17,10 @@ class Controller:
         #set the initial focus date and calendar matrix before UI is initialized, that way it is usable by UI
         self._focus_date = datetime.date.today()
         self._focus_month = self.set_focus_month(self._focus_date)
-
         self._focus_day = self.get_init_day()
 
+        #initialize the ui management after the initial business logic is complete
         self.ui_pages = self.init_ui_pages(self._focus_day)
-
         self.show_page('main')
 
     #----------------------- focus date and day management -------------------
@@ -51,7 +50,7 @@ class Controller:
         self._focus_day = day
 
     def get_init_day(self):
-        #this gets the intial day object to pass to the ui to fill in appropriate info
+        #this gets the intial day object to pass to the ui to fill in appropriate info at the beginning of the app
         for week in self._focus_month.month_matrix:
             for day in week:
                 if day != 0:
@@ -65,10 +64,11 @@ class Controller:
         return model.Month(date.month, date.year)
 
     def get_month_cal(self):
-        #this returns the current month calendar matrix
+        #this returns the current month calendar reference matrix to be used in the ui to build the button matrix
         return self._focus_month.month_matrix
     
-    def get_month_year_str(self) -> str:
+    def get_month_year_str(self) -> str: 
+        #wanted to handle the string formatting here in controller rather than in the ui
         return f'{self._focus_month.month_name} {self._focus_month.year}'
     
     def adv_focus_month(self):
@@ -88,7 +88,6 @@ class Controller:
     #------------------------- UI management ---------------------
 
     def init_ui_pages(self, init_day: datetime.date) -> dict:
-        #this initializes the ui pages to be called when needed
         pages = {
             'main': ui.MainPage(self.root, self, init_day),
             'calendar': ui.CalendarPage(self.root, self),
@@ -109,17 +108,22 @@ class Controller:
         return date_str
 
     def calendar_button_clicked(self, i, j):
-        #pulls the specific day referenced from the button calendar, and passes the date from the clicked day to the 
-        #set focus date function
+        #pulls the specific day referenced from the button calendar from the ui by i and j, 
+        # and passes the date from the clicked day to the set focus date function
         day = self._focus_month.month_matrix[i][j]
         self.focus_day = day
         self.focus_date = day.date
         self.ui_pages['main'].init_day_info(day)
         self.show_page('main')
 
+    #--------------------- Data Controller interaction ----------------------
+
     def save_day(self):
-        #this passes the day object to the data controller to pull the needed data and pass it to the repository
-        self.data_controller.save_entry(self._focus_day)
+        #wanted to make sure to extract the needed data to pass to the data controller,
+        #rather than pas the day object
+        date = self._focus_day.date
+        entry = self._focus_day.entry
+        self.data_controller.save_entry(date, entry)
     
 
 class DataController:
@@ -127,7 +131,8 @@ class DataController:
     def __init__(self, repository_):
         self.entries = repository_
 
-    def save_entry(self, day):
-        date = day.date
-        entry = day.entry
+    def save_entry(self, date, entry):
         self.entries.store_entry(date, entry)
+
+    def get_months_entries(self, start_date, end_date) -> dict:
+        entries_dict = self.entries.get_entries(start_date, end_date)

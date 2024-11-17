@@ -74,21 +74,20 @@ class Entries:
         with self.cursor_manager() as cursor:
             cursor.execute(query, (formatted_date, text))
 
-    def get_single_entry(self, date: datetime.date) -> str:
+    def get_entries(self, start_date: datetime.date, end_date: datetime.date) -> str:
         #retreives a specific entry with a given date
         query = f'''
-            SELECT entry FROM {ENTRIES_TABLE}
-            WHERE date = ?
+            SELECT date, entry
+            FROM {ENTRIES_TABLE}
+            WHERE date BETWEEN ? and ?
             '''
-        formatted_date = date.isoformat() #make sure the date is formatted to iso: 'yyyy-mm-dd'
+        f_start_date = start_date.isoformat() #make sure the date is formatted to iso: 'yyyy-mm-dd'
+        f_end_date = end_date.isoformat()
 
         with self.cursor_manager() as cursor:
-            cursor.execute(query, (formatted_date, ))
-            entry = cursor.fetchone()
+            cursor.execute(query, (f_start_date, f_end_date))
+            entries = cursor.fetchall()
+            return entries
         
-        if entry:
-            return entry
-        else:
-            return None
         
         
