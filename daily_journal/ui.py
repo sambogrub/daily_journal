@@ -2,7 +2,10 @@
 
 import tkinter as tk
 from tkinter import ttk
-from functools import partial
+
+
+type UiPage = MainPage | CalendarPage | OptionsPage
+""" Represents one of the known pages. Use it to improve type hinting. """
 
 
 class StyleManager:
@@ -112,9 +115,8 @@ class CalendarPage(ttk.Frame):
 
     def set_month_name_var(self):
         #this sets the month name variable to the currently focused month
-        self.month_name_var.set(self.cont.get_month_year_str())
+        self.month_name_var.set(self.cont.month_year_str)
 
-  
         
 
 class CalendarFrame(ttk.Frame):
@@ -124,6 +126,7 @@ class CalendarFrame(ttk.Frame):
         super().__init__(parent)
         
         self.cont = controller_
+        self._callback = controller_.calendar_button_clicked
 
         self.populate_calendar_frame()
 
@@ -151,19 +154,24 @@ class CalendarFrame(ttk.Frame):
                 if button is not None:
                     button.grid(row = r, column = c, sticky = 'nsew')
         
-    def build_calendar_matrix(self) -> list[list]:
-        ref_cal_matrix = self.cont.get_month_cal()
-        
+    def build_calendar_matrix(self) -> list[list[tk.Button]]:
+        """ Helper method for conversion of model.Calendar into tkinter Buttons grid """
         calendar_matrix = []
-        for i, week in enumerate(ref_cal_matrix):
+        for week in self.cont.month_cal:
             new_week = []
-            for j, day in enumerate(week):
-                
-                if day == 0:
-                    new_week.append(None)
-                else:
-                    button = ttk.Button(self, text = day.date.day, command = partial(self.cont.calendar_button_clicked, i, j))
+            for day in week:
+                # some days in a week row may not belong to the current month
+                if day:
+                    day_ = day.date.day
+                    button = ttk.Button(
+                        self,
+                        text=day_,
+                        # use default d value to force early binding of day_
+                        command=lambda d=day_: self._callback(d)
+                    )
                     new_week.append(button)
+                else:
+                    new_week.append(None)
             calendar_matrix.append(new_week)
         return calendar_matrix
 
