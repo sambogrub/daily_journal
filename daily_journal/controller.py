@@ -56,7 +56,7 @@ class Controller:
         self._focus_day = self._focus_month[date.day]
 
     @property
-    def month_cal(self):
+    def month_cal(self) -> list[list[model.Day | None]]:
         #this returns the current month calendar reference matrix to be used in the ui to build the button matrix
         return self._focus_month.month_matrix
 
@@ -95,10 +95,9 @@ class Controller:
         if page:
             page.tkraise()
 
-    def calendar_button_clicked(self, i, j):
-        #pulls the specific day referenced from the button calendar from the ui by i and j, 
-        # and passes the date from the clicked day to the set focus date function
-        day = self._focus_month.month_matrix[i][j]
+    def calendar_button_clicked(self, day_of_month: int):
+        """ Callback method bound to calendar buttons. Switches focus to given day_of_month """
+        day = self._focus_month[day_of_month]
         self.focus_day = day
         self.ui_pages[PageId.MAIN].init_day_info(day)
         self.show_page(PageId.MAIN)
