@@ -58,12 +58,12 @@ class Controller:
     @property
     def month_cal(self) -> list[list[model.Day | None]]:
         #this returns the current month calendar reference matrix to be used in the ui to build the button matrix
-        return self._focus_month.month_matrix
+        return self._focus_month.weeks
 
     @property
     def month_year_str(self) -> str:
         #wanted to handle the string formatting here in controller rather than in the ui
-        return f'{self._focus_month.month_name} {self._focus_month.year}'
+        return f'{self._focus_month.name} {self._focus_month.year}'
     
     def adv_focus_month(self) -> None:
         """ Advances the focus to 1st day of the next month """
