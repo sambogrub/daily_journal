@@ -4,14 +4,10 @@ import calendar as cal
 
 class Day:
     """Day class to hold all entries and future parts"""
-    def __init__(self, date: datetime.date):
+    def __init__(self, date: datetime.date, entry: str = ''):
         self.date = date
-        self.entry = ''
-        self.date_string = self.get_date_string()
-    
-    def get_date_string(self) -> str:
-        return datetime.datetime.strftime(self.date, '%B %d, %Y')
-
+        self.entry = entry
+        self.date_string = date.strftime('%B %d, %Y')
 
 def day(year: int, month: int, day_: int) -> Day:
     """ Factory function simplifying creation of new Day instances """
