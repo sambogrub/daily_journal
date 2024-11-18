@@ -3,8 +3,6 @@ import datetime
 import tkinter as tk
 from enum import StrEnum
 
-from dateutil.relativedelta import relativedelta
-
 import logger
 import model
 import ui
@@ -68,19 +66,15 @@ class Controller:
         return f'{self._focus_month.month_name} {self._focus_month.year}'
     
     def adv_focus_month(self) -> None:
-        #Had to have a way to keep track of the current date, so just used the focus date. 
-        #Since the calendar is used only to choose a previous date
-        cur_date = datetime.date(self._focus_month.year, self._focus_month.month_num, 1)
-        next_month = cur_date + relativedelta(months = 1)
-        self.focus_month = next_month
+        """ Advances the focus to 1st day of the next month """
+        self._focus_month += 1
+        self._focus_day = 1
 
     def rev_focus_month(self) -> None:
-        #Had to have a way to keep track of the current date, so just used the focus date. 
-        #Since the calendar is used only to choose a previous date
-        cur_date = datetime.date(self._focus_month.year, self._focus_month.month_num, 1)
-        next_month = cur_date + relativedelta(months = -1)
-        self.focus_month = next_month
-    
+        """ Reverses the focus to 1st day of the previous month """
+        self._focus_month -= 1
+        self._focus_day = 1
+
     #------------------------- UI management ---------------------
 
     def init_ui_pages(self, init_day: model.Day) -> dict[PageId, ui.UiPage]:

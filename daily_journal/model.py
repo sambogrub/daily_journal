@@ -47,3 +47,29 @@ class Month:
         week_index, day_index = divmod(matrix_day, 7)
         return self.month_matrix[week_index][day_index]
 
+    def _delta(self, delta: int):
+        """
+        Helper method creating new Month instance which is "delta" months
+        in the future (if delta > 0) or past (if delta < 0).
+        """
+        year_diff, new_month = divmod(self.month_num + delta, 12)
+        if not new_month:
+            # December will always come out as 0 when using mod
+            new_month = 12
+            # December will always have additional (unwanted) year when using div
+            year_diff -= 1
+        return Month(new_month, self.year + year_diff)
+
+    def __add__(self, months_delta: int):
+        """
+        Creates a new Month instance which will be "months_delta"
+        months in the future compared to the month the self represents.
+        """
+        return self._delta(delta=months_delta)
+
+    def __sub__(self, months_delta: int):
+        """
+        Creates a new Month instance which will be "months_delta"
+        months in the past compared to the month the self represents.
+        """
+        return self._delta(delta=-months_delta)
