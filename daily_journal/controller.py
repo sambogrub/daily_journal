@@ -5,6 +5,7 @@ from enum import StrEnum
 
 from dateutil.relativedelta import relativedelta
 
+import logger
 import model
 import ui
 
@@ -19,7 +20,8 @@ class PageId(StrEnum):
 class Controller:
     """Controller for Daily Journal. Will be responsible for interactions with the repository,
     passing entry objects between ui and the repository"""
-    def __init__(self, repository_, root: tk.Tk):
+    def __init__(self, repository_, root: tk.Tk, logger_ = logger.journal_logger()):
+        self._logger = logger_
         self.data_controller = DataController(repository_)
         self.root = root
 
@@ -90,10 +92,11 @@ class Controller:
         return pages
     
     def show_page(self, page_name: PageId):
-        #This is to let controller manage the ui view, raising the appropriate page to the top
-        page = self.ui_pages.get(page_name)
-        if page:
-            page.tkraise()
+        """ Raise desired page to the top making it visible, while hiding the remaining pages. """
+        try:
+            self.ui_pages[page_name].tkraise()
+        except KeyError:
+            self._logger.exception(f'Request to show unknown page {page_name}')
 
     def calendar_button_clicked(self, day_of_month: int):
         """ Callback method bound to calendar buttons. Switches focus to given day_of_month """
