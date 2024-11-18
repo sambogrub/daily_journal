@@ -1,5 +1,4 @@
 """this is the module that will hold the controller for the daily journal app"""
-import calendar as cal
 import datetime
 import tkinter as tk
 from enum import StrEnum
@@ -25,30 +24,15 @@ class Controller:
         self.root = root
 
         #set the initial focus date and calendar matrix before UI is initialized, that way it is usable by UI
-        self._focus_date = datetime.date.today()
-        self._focus_month = self.set_focus_month(self._focus_date)
-        self._focus_day = self._focus_month[self._focus_date.day]
+        today = datetime.date.today()
+        self._focus_month = self.set_focus_month(today)
+        self._focus_day = self._focus_month[today.day]
 
         #initialize the ui management after the initial business logic is complete
         self.ui_pages = self.init_ui_pages(self._focus_day)
         self.show_page(PageId.MAIN)
 
     #----------------------- focus date and day management -------------------
-
-    @property    
-    def focus_date(self) -> datetime.date:
-        """_focus_date propery, this is the getter"""
-        return self._focus_date
-
-    @focus_date.setter
-    def focus_date(self, date: datetime.date):
-        self._focus_date = date
-
-    def get_focus_date_str(self) ->str: #LOOK TO SEE IF NEEDED!!
-        #returns a string of the date in 'MonthName Day, Year' format
-        month_str = cal.month_name[self._focus_date.month]
-        date_str = f'{month_str} {self._focus_date.day}, {self._focus_date.year}'
-        return date_str
 
     @property
     def focus_day(self) -> model.Day:
@@ -89,7 +73,7 @@ class Controller:
     
     #------------------------- UI management ---------------------
 
-    def init_ui_pages(self, init_day: datetime.date) -> dict:
+    def init_ui_pages(self, init_day: model.Day) -> dict:
         pages = {
             PageId.MAIN: ui.MainPage(self.root, self, init_day),
             PageId.CALENDAR: ui.CalendarPage(self.root, self),
@@ -102,19 +86,12 @@ class Controller:
         page = self.ui_pages.get(page_name)
         if page:
             page.tkraise()
-        
-    def get_focus_date_str(self) ->str:
-        #returns a string of the date in 'MonthName Day, Year' format
-        month_str = cal.month_name[self._focus_date.month]
-        date_str = f'{month_str} {self._focus_date.day}, {self._focus_date.year}'
-        return date_str
 
     def calendar_button_clicked(self, i, j):
         #pulls the specific day referenced from the button calendar from the ui by i and j, 
         # and passes the date from the clicked day to the set focus date function
         day = self._focus_month.month_matrix[i][j]
         self.focus_day = day
-        self.focus_date = day.date
         self.ui_pages[PageId.MAIN].init_day_info(day)
         self.show_page(PageId.MAIN)
 
