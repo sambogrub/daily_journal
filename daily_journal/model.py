@@ -13,6 +13,11 @@ class Day:
         return datetime.datetime.strftime(self.date, '%B %d, %Y')
 
 
+def day(year: int, month: int, day_: int) -> Day:
+    """ Factory function simplifying creation of new Day instances """
+    return Day(datetime.date(year, month, day_))
+
+
 type Week = list[Day | None]
 """ 
 Represents 7 days of a week. Entries with None value
@@ -26,21 +31,28 @@ class Month:
         self.number: int = month_number
         self.year: int = year
         self.name: str = cal.month_name[month_number]
-        self.weeks: list[Week] = self.build_calendar_matrix()
-        self.last_day: int = 0
+        self.weeks: list[Week] = self.week_list(year_=year, month_=month_number)
         self._first_day, self._number_of_days = cal.monthrange(year, month_number)
 
-    def build_calendar_matrix(self) -> list[Week]:
-        month_matrix = cal.monthcalendar(self.year, self.number)
-        if len(month_matrix) < 6:
-            month_matrix.append([0,0,0,0,0,0,0])
-        for i, week in enumerate(month_matrix):
-            for j, day_num in enumerate(week):
-                if day_num != 0:
-                    self.last_day = day_num
-                    date = datetime.date(self.year, self.number, day_num)
-                    month_matrix[i][j] = Day(date)
-        return month_matrix
+    @staticmethod
+    def week_list(year_: int, month_: int) -> list[Week]:
+        """
+        Builds list of weeks for the given year and month.
+
+        Each Week is a list of 7 Day instances. Weeks which
+        span through the previous or the next month are padded
+        with None instead of Day instances.
+        """
+        month_calendar = cal.monthcalendar(year_, month_)
+        # ensure there are always 6 weeks as it helps to simplify UI layout
+        if len(month_calendar) < 6:
+            month_calendar.append([0] * 7)
+        weeks = [
+            # source day_ is mapped to None if it doesn't belong to the given month_
+            [day(year_, month_, day_) if day_ else None for day_ in week]
+            for week in month_calendar
+        ]
+        return weeks
 
     def __getitem__(self, day_of_month: int) -> Day:
         """ Returns requested day of this month """
