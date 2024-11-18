@@ -4,6 +4,10 @@ import tkinter as tk
 from tkinter import ttk
 
 
+type UiPage = MainPage | CalendarPage | OptionsPage
+""" Represents one of the known pages. Use it to improve type hinting. """
+
+
 class StyleManager:
     """This holds the configurations of the ttk styles used throughout the ui. 
     The separate class solely for styles, should help with readability and redundancy"""

@@ -29,7 +29,7 @@ class Controller:
         self.focus_month = datetime.date.today()
 
         #initialize the ui management after the initial business logic is complete
-        self.ui_pages = self.init_ui_pages(self._focus_day)
+        self.ui_pages: dict[PageId, ui.UiPage] = self.init_ui_pages(self._focus_day)
         self.show_page(PageId.MAIN)
 
     #----------------------- focus date and day management -------------------
@@ -40,7 +40,7 @@ class Controller:
         return self._focus_day
     
     @focus_day.setter
-    def focus_day(self, day: model.Day):
+    def focus_day(self, day: model.Day) -> None:
         # TODO - consider adding logic checking, if new day is within focus_month
         # the point is to always keep focus_day and focus_month in sync
         self._focus_day = day
@@ -48,11 +48,11 @@ class Controller:
     #------------------------ focus month management ------------------
 
     @property
-    def focus_month(self):
+    def focus_month(self) -> model.Month:
         return self._focus_month
 
     @focus_month.setter
-    def focus_month(self, date):
+    def focus_month(self, date) -> None:
         self._focus_month = model.Month(date.month, date.year)
         # don't let focus_day stuck in the wrong month
         self._focus_day = self._focus_month[date.day]
@@ -67,14 +67,14 @@ class Controller:
         #wanted to handle the string formatting here in controller rather than in the ui
         return f'{self._focus_month.month_name} {self._focus_month.year}'
     
-    def adv_focus_month(self):
+    def adv_focus_month(self) -> None:
         #Had to have a way to keep track of the current date, so just used the focus date. 
         #Since the calendar is used only to choose a previous date
         cur_date = datetime.date(self._focus_month.year, self._focus_month.month_num, 1)
         next_month = cur_date + relativedelta(months = 1)
         self.focus_month = next_month
 
-    def rev_focus_month(self):
+    def rev_focus_month(self) -> None:
         #Had to have a way to keep track of the current date, so just used the focus date. 
         #Since the calendar is used only to choose a previous date
         cur_date = datetime.date(self._focus_month.year, self._focus_month.month_num, 1)
@@ -83,7 +83,7 @@ class Controller:
     
     #------------------------- UI management ---------------------
 
-    def init_ui_pages(self, init_day: model.Day) -> dict:
+    def init_ui_pages(self, init_day: model.Day) -> dict[PageId, ui.UiPage]:
         pages = {
             PageId.MAIN: ui.MainPage(self.root, self, init_day),
             PageId.CALENDAR: ui.CalendarPage(self.root, self),
@@ -91,14 +91,14 @@ class Controller:
         }
         return pages
     
-    def show_page(self, page_name: PageId):
+    def show_page(self, page_name: PageId) -> None:
         """ Raise desired page to the top making it visible, while hiding the remaining pages. """
         try:
             self.ui_pages[page_name].tkraise()
         except KeyError:
             self._logger.exception(f'Request to show unknown page {page_name}')
 
-    def calendar_button_clicked(self, day_of_month: int):
+    def calendar_button_clicked(self, day_of_month: int) -> None:
         """ Callback method bound to calendar buttons. Switches focus to given day_of_month """
         day = self._focus_month[day_of_month]
         self.focus_day = day
@@ -107,7 +107,7 @@ class Controller:
 
     #--------------------- Data Controller interaction ----------------------
 
-    def save_day(self):
+    def save_day(self) -> None:
         #wanted to make sure to extract the needed data to pass to the data controller,
         #rather than pas the day object
         date = self._focus_day.date
@@ -120,7 +120,7 @@ class DataController:
     def __init__(self, repository_):
         self.entries = repository_
 
-    def save_entry(self, date, entry):
+    def save_entry(self, date, entry) -> None:
         self.entries.store_entry(date, entry)
 
     def get_months_entries(self, start_date, end_date) -> dict:
