@@ -9,21 +9,28 @@ class Day:
         self.entry = ''
         self.date_string = self.get_date_string()
     
-    def get_date_string(self):
+    def get_date_string(self) -> str:
         return datetime.datetime.strftime(self.date, '%B %d, %Y')
+
+
+type Week = list[Day | None]
+""" 
+Represents 7 days of a week. Entries with None value
+are days of the past or the future month.
+"""
 
 
 class Month:
     """Month class to hold all days and month calendar"""
-    def __init__(self, month_num: int, year: int) -> list[list]:
-        self.month_num = month_num
-        self.year = year
-        self.month_matrix = self.build_calendar_matrix()
-        self.month_name = self.set_month_name()
-        self.last_day = 0
+    def __init__(self, month_num: int, year: int):
+        self.month_num: int = month_num
+        self.year: int = year
+        self.month_matrix: list[Week] = self.build_calendar_matrix()
+        self.month_name: str = self.get_month_name()
+        self.last_day: int = 0
         self._first_day, self._number_of_days = cal.monthrange(year, month_num)
 
-    def build_calendar_matrix(self):
+    def build_calendar_matrix(self) -> list[Week]:
         month_matrix = cal.monthcalendar(self.year, self.month_num)
         if len(month_matrix) < 6:
             month_matrix.append([0,0,0,0,0,0,0])
@@ -35,7 +42,7 @@ class Month:
                     month_matrix[i][j] = Day(date)
         return month_matrix
     
-    def set_month_name(self):
+    def get_month_name(self) -> str:
         #this sets the string name for the month
         return cal.month_name[self.month_num]
 
@@ -47,7 +54,7 @@ class Month:
         week_index, day_index = divmod(matrix_day, 7)
         return self.month_matrix[week_index][day_index]
 
-    def _delta(self, delta: int):
+    def _delta(self, delta: int) -> 'Month':
         """
         Helper method creating new Month instance which is "delta" months
         in the future (if delta > 0) or past (if delta < 0).
@@ -60,14 +67,14 @@ class Month:
             year_diff -= 1
         return Month(new_month, self.year + year_diff)
 
-    def __add__(self, months_delta: int):
+    def __add__(self, months_delta: int) -> 'Month':
         """
         Creates a new Month instance which will be "months_delta"
         months in the future compared to the month the self represents.
         """
         return self._delta(delta=months_delta)
 
-    def __sub__(self, months_delta: int):
+    def __sub__(self, months_delta: int) -> 'Month':
         """
         Creates a new Month instance which will be "months_delta"
         months in the past compared to the month the self represents.
