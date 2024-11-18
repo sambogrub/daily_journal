@@ -1,11 +1,21 @@
 """this is the module that will hold the controller for the daily journal app"""
+import calendar as cal
+import datetime
+import tkinter as tk
+from enum import StrEnum
+
+from dateutil.relativedelta import relativedelta
+
 import model
 import ui
 
-import datetime
-import tkinter as tk
-import calendar as cal
-from dateutil.relativedelta import relativedelta
+
+class PageId(StrEnum):
+    """ IDs of all UI Pages """
+    MAIN = 'main'
+    CALENDAR = 'calendar'
+    OPTIONS = 'options'
+
 
 class Controller:
     """Controller for Daily Journal. Will be responsible for interactions with the repository,
@@ -21,7 +31,7 @@ class Controller:
 
         #initialize the ui management after the initial business logic is complete
         self.ui_pages = self.init_ui_pages(self._focus_day)
-        self.show_page('main')
+        self.show_page(PageId.MAIN)
 
     #----------------------- focus date and day management -------------------
 
@@ -89,13 +99,13 @@ class Controller:
 
     def init_ui_pages(self, init_day: datetime.date) -> dict:
         pages = {
-            'main': ui.MainPage(self.root, self, init_day),
-            'calendar': ui.CalendarPage(self.root, self),
-            'options': ui.OptionsPage(self.root, self)
+            PageId.MAIN: ui.MainPage(self.root, self, init_day),
+            PageId.CALENDAR: ui.CalendarPage(self.root, self),
+            PageId.OPTIONS: ui.OptionsPage(self.root, self)
         }
         return pages
     
-    def show_page(self, page_name: str):
+    def show_page(self, page_name: PageId):
         #This is to let controller manage the ui view, raising the appropriate page to the top
         page = self.ui_pages.get(page_name)
         if page:
@@ -113,8 +123,8 @@ class Controller:
         day = self._focus_month.month_matrix[i][j]
         self.focus_day = day
         self.focus_date = day.date
-        self.ui_pages['main'].init_day_info(day)
-        self.show_page('main')
+        self.ui_pages[PageId.MAIN].init_day_info(day)
+        self.show_page(PageId.MAIN)
 
     #--------------------- Data Controller interaction ----------------------
 
