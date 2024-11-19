@@ -69,32 +69,24 @@ class CalendarPage(ttk.Frame):
     """This is the second page. It has the calendar selection, the recent entries blurb,
     as well as the options button"""
     def __init__(self, root, controller_):
-         #initialize the frame inheritance
         super().__init__(root)
-        #place the main page frame
         self.place(anchor='ne', relx=1, y=0, relwidth=.85, relheight=1)
 
-        #name the passed controller instance
-        self.cont = controller_
-
-        #set the variable for the month label
         self.month_name = tk.StringVar()
-
-        #call the populate frame function
+        self.calendar_frame = CalendarFrame(self, controller_)
         self.populate_frame(controller_.change_month_handler)
 
     def populate_frame(self, month_cmd):
         #this will populate the calendar page frame
-        self.calendar_label = ttk.Label(self, textvariable=self.month_name)
-        self.prev_month_button = ttk.Button(self, text='Prev', command=lambda: month_cmd(-1))
-        self.next_month_button = ttk.Button(self, text='Next', command=lambda: month_cmd(1))
-        self.calendar_frame = CalendarFrame(self, self.cont)
+        calendar_label = ttk.Label(self, textvariable=self.month_name)
+        prev_month_button = ttk.Button(self, text='Prev', command=lambda: month_cmd(-1))
+        next_month_button = ttk.Button(self, text='Next', command=lambda: month_cmd(1))
 
         #place the widgets
-        self.calendar_label.place(anchor='n', relx=.5, y=5, width=120, height=40)
+        calendar_label.place(anchor='n', relx=.5, y=5, width=120, height=40)
         self.calendar_frame.place(anchor='center', relx=.5, rely=.25, width=300, height=300)
-        self.prev_month_button.place(anchor='n', relx=.25, y=5, width=75, height=40)
-        self.next_month_button.place(anchor='n', relx=.75, y=5, width=75, height=40)
+        prev_month_button.place(anchor='n', relx=.25, y=5, width=75, height=40)
+        next_month_button.place(anchor='n', relx=.75, y=5, width=75, height=40)
 
     def update_calendar(self, month_name: str):
         self.month_name.set(month_name)
