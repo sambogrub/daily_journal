@@ -66,16 +66,6 @@ class Controller:
     def month_year_str(self) -> str:
         #wanted to handle the string formatting here in controller rather than in the ui
         return f'{self._focus_month.name} {self._focus_month.year}'
-    
-    def adv_focus_month(self) -> None:
-        """ Advances the focus to 1st day of the next month """
-        self._focus_month += 1
-        self._focus_day = 1
-
-    def rev_focus_month(self) -> None:
-        """ Reverses the focus to 1st day of the previous month """
-        self._focus_month -= 1
-        self._focus_day = 1
 
     #------------------------- UI management ---------------------
 
@@ -106,6 +96,12 @@ class Controller:
         self.focus_day = day
         self.ui_pages[PageId.MAIN].update_day_info(day)
         self.show_page(PageId.MAIN)
+
+    def change_month_handler(self, month_delta: int) -> None:
+        """ Callback handling change of the focus_month """
+        self._focus_month += month_delta
+        self._focus_day = 1
+        self.ui_pages[PageId.CALENDAR].update_calendar(self.month_year_str)
 
     #--------------------- Data Controller interaction ----------------------
 

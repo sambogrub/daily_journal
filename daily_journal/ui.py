@@ -78,17 +78,16 @@ class CalendarPage(ttk.Frame):
         self.cont = controller_
 
         #set the variable for the month label
-        self.month_name_var = tk.StringVar()
-        self.set_month_name_var()
+        self.month_name = tk.StringVar()
 
         #call the populate frame function
-        self.populate_frame()
+        self.populate_frame(controller_.change_month_handler)
 
-    def populate_frame(self):
+    def populate_frame(self, month_cmd):
         #this will populate the calendar page frame
-        self.calendar_label = ttk.Label(self, textvariable=self.month_name_var)
-        self.prev_month_button = ttk.Button(self, text='Prev', command=self.reverse_calendar)
-        self.next_month_button = ttk.Button(self, text='Next', command=self.advance_calendar)
+        self.calendar_label = ttk.Label(self, textvariable=self.month_name)
+        self.prev_month_button = ttk.Button(self, text='Prev', command=lambda: month_cmd(-1))
+        self.next_month_button = ttk.Button(self, text='Next', command=lambda: month_cmd(1))
         self.calendar_frame = CalendarFrame(self, self.cont)
 
         #place the widgets
@@ -97,19 +96,9 @@ class CalendarPage(ttk.Frame):
         self.prev_month_button.place(anchor='n', relx=.25, y=5, width=75, height=40)
         self.next_month_button.place(anchor='n', relx=.75, y=5, width=75, height=40)
 
-    def advance_calendar(self):
-        self.cont.adv_focus_month()   
-        self.set_month_name_var()
+    def update_calendar(self, month_name: str):
+        self.month_name.set(month_name)
         self.calendar_frame.populate_calendar_frame()
-
-    def reverse_calendar(self):
-        self.cont.rev_focus_month()   
-        self.set_month_name_var()
-        self.calendar_frame.populate_calendar_frame()
-
-    def set_month_name_var(self):
-        #this sets the month name variable to the currently focused month
-        self.month_name_var.set(self.cont.month_year_str)
 
 
 class CalendarFrame(ttk.Frame):
