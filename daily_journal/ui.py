@@ -48,22 +48,24 @@ class MainPage(ttk.Frame):
         self.set_date_str(day)
 
     def set_date_str(self, day):
-        #this sets the tk.stringvar to the currently focused date
+        #this sets the tk.StringVar to the currently focused date
         self.date_str.set(day.date_string)
 
     def populate_frame(self, calendar_cmd, save_cmd):
         #this populates the frame with the date, text entry box, save entry button, as well as the calendar page button
-        self.date_label = ttk.Label(self, textvariable=self.date_str)
-        self.cal_page_button = ttk.Button(self, text='Cal Page', command=calendar_cmd)
-        self.entry_textbox = tk.Text(self)
-        self.save_entry_button = ttk.Button(self, text='Save Entry', command=save_cmd)
+        date_label = ttk.Label(self, textvariable=self.date_str)
+        cal_page_button = ttk.Button(self, text='Cal Page', command=calendar_cmd)
+        entry_textbox = tk.Text(self)
+        save_entry_button = ttk.Button(self, text='Save Entry', command=save_cmd)
 
         #place the widgets
-        self.date_label.place(anchor='n', relx=.5, y=0, width=150, height=40)
-        self.cal_page_button.place(anchor='ne', relx=.995, y=0, width=100, height=40)
-        self.entry_textbox.place(anchor='n', relx=.5, y=45, relwidth=1, relheight=.88)
-        self.save_entry_button.place(anchor='s', relx=.5, rely=.99, width=125, height=40)
-        
+        date_label.place(anchor='n', relx=.5, y=0, width=150, height=40)
+        cal_page_button.place(anchor='ne', relx=.995, y=0, width=100, height=40)
+        entry_textbox.place(anchor='n', relx=.5, y=45, relwidth=1, relheight=.88)
+        save_entry_button.place(anchor='s', relx=.5, rely=.99, width=125, height=40)
+
+        self.entry_textbox = entry_textbox
+
 
 class CalendarPage(ttk.Frame):
     """This is the second page. It has the calendar selection, the recent entries blurb,
