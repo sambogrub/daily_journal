@@ -31,22 +31,18 @@ class StyleManager:
 class MainPage(ttk.Frame):
     """This is the main page, has a basic layout of date, text entry box, and a save entry button.
     This will also have the button to get to the calendar page"""
-    def __init__(self, root, controller_, init_day):
+    def __init__(self, root, cal_btn_callback, save_btn_callback):
         #initialize the frame inheritance
         super().__init__(root)
 
         #place the main page frame
         self.place(x=0, y=0, relwidth=1, relheight=1)
 
-        #name the passed controller instance
-        self.cont = controller_
-
         #initialize tk variables
         self.date_str = tk.StringVar()
 
-        self.init_day_info(init_day)
-        self.populate_frame()
-    
+        self.populate_frame(calendar_cmd=cal_btn_callback, save_cmd=save_btn_callback)
+
     def init_day_info(self, day):
         #this takes the day object and passes the needed info to the proper locations
         self.set_date_str(day)
@@ -55,13 +51,12 @@ class MainPage(ttk.Frame):
         #this sets the tk.stringvar to the currently focused date
         self.date_str.set(day.date_string)
 
-    def populate_frame(self):
+    def populate_frame(self, calendar_cmd, save_cmd):
         #this populates the frame with the date, text entry box, save entry button, as well as the calendar page button
-        self.date_label = ttk.Label(self,textvariable=self.date_str)
         self.date_label = ttk.Label(self, textvariable=self.date_str)
-        self.cal_page_button = ttk.Button(self, text='Cal Page', command=lambda: self.cont.show_page('calendar'))
+        self.cal_page_button = ttk.Button(self, text='Cal Page', command=calendar_cmd)
         self.entry_textbox = tk.Text(self)
-        self.save_entry_button = ttk.Button(self, text='Save Entry')
+        self.save_entry_button = ttk.Button(self, text='Save Entry', command=save_cmd)
 
         #place the widgets
         self.date_label.place(anchor='n', relx=.5, y=0, width=150, height=40)

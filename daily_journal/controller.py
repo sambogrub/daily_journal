@@ -27,7 +27,9 @@ class Controller:
         self.focus_month = datetime.date.today()
 
         #initialize the ui management after the initial business logic is complete
-        self.ui_pages: dict[PageId, ui.UiPage] = self.init_ui_pages(self._focus_day)
+        self.ui_pages: dict[PageId, ui.UiPage] = self.init_ui_pages()
+
+        self.ui_pages[PageId.MAIN].init_day_info(self._focus_day)
         self.show_page(PageId.MAIN)
 
     #----------------------- focus date and day management -------------------
@@ -77,9 +79,15 @@ class Controller:
 
     #------------------------- UI management ---------------------
 
-    def init_ui_pages(self, init_day: model.Day) -> dict[PageId, ui.UiPage]:
+    def init_ui_pages(self) -> dict[PageId, ui.UiPage]:
+        main_page = ui.MainPage(
+            root=self.root,
+            cal_btn_callback=lambda: self.show_page(PageId.CALENDAR),
+            # save handler does nothing for now
+            save_btn_callback=lambda: ...
+        )
         pages = {
-            PageId.MAIN: ui.MainPage(self.root, self, init_day),
+            PageId.MAIN: main_page,
             PageId.CALENDAR: ui.CalendarPage(self.root, self),
             PageId.OPTIONS: ui.OptionsPage(self.root, self)
         }
