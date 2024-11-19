@@ -3,6 +3,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+import model
+
 
 type UiPage = MainPage | CalendarPage | OptionsPage
 """ Represents one of the known pages. Use it to improve type hinting. """
@@ -43,12 +45,8 @@ class MainPage(ttk.Frame):
 
         self.populate_frame(calendar_cmd=cal_btn_callback, save_cmd=save_btn_callback)
 
-    def init_day_info(self, day):
+    def update_day_info(self, day: model.Day):
         #this takes the day object and passes the needed info to the proper locations
-        self.set_date_str(day)
-
-    def set_date_str(self, day):
-        #this sets the tk.StringVar to the currently focused date
         self.date_str.set(day.date_string)
 
     def populate_frame(self, calendar_cmd, save_cmd):

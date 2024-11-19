@@ -29,7 +29,7 @@ class Controller:
         #initialize the ui management after the initial business logic is complete
         self.ui_pages: dict[PageId, ui.UiPage] = self.init_ui_pages()
 
-        self.ui_pages[PageId.MAIN].init_day_info(self._focus_day)
+        self.ui_pages[PageId.MAIN].update_day_info(self._focus_day)
         self.show_page(PageId.MAIN)
 
     #----------------------- focus date and day management -------------------
@@ -104,7 +104,7 @@ class Controller:
         """ Callback method bound to calendar buttons. Switches focus to given day_of_month """
         day = self._focus_month[day_of_month]
         self.focus_day = day
-        self.ui_pages[PageId.MAIN].init_day_info(day)
+        self.ui_pages[PageId.MAIN].update_day_info(day)
         self.show_page(PageId.MAIN)
 
     #--------------------- Data Controller interaction ----------------------
