@@ -62,11 +62,6 @@ class Controller:
         #this returns the current month calendar reference matrix to be used in the ui to build the button matrix
         return self._focus_month.weeks
 
-    @property
-    def month_year_str(self) -> str:
-        #wanted to handle the string formatting here in controller rather than in the ui
-        return f'{self._focus_month.name} {self._focus_month.year}'
-
     #------------------------- UI management ---------------------
 
     def init_ui_pages(self) -> dict[PageId, ui.UiPage]:
@@ -76,9 +71,15 @@ class Controller:
             # save handler does nothing for now
             save_btn_callback=lambda: ...
         )
+        cal_page = ui.CalendarPage(
+            root=self.root,
+            month=self._focus_month,
+            change_month_callback=self.change_month_handler,
+            select_day_callback=self.calendar_button_clicked,
+        )
         pages = {
             PageId.MAIN: main_page,
-            PageId.CALENDAR: ui.CalendarPage(self.root, self),
+            PageId.CALENDAR: cal_page,
             PageId.OPTIONS: ui.OptionsPage(self.root, self)
         }
         return pages
@@ -101,7 +102,7 @@ class Controller:
         """ Callback handling change of the focus_month """
         self._focus_month += month_delta
         self._focus_day = 1
-        self.ui_pages[PageId.CALENDAR].update_calendar(self.month_year_str)
+        self.ui_pages[PageId.CALENDAR].update_calendar(self._focus_month)
 
     #--------------------- Data Controller interaction ----------------------
 

@@ -68,13 +68,14 @@ class MainPage(ttk.Frame):
 class CalendarPage(ttk.Frame):
     """This is the second page. It has the calendar selection, the recent entries blurb,
     as well as the options button"""
-    def __init__(self, root, controller_):
+    def __init__(self, root, month: model.Month, change_month_callback, select_day_callback):
         super().__init__(root)
         self.place(anchor='ne', relx=1, y=0, relwidth=.85, relheight=1)
 
         self.month_name = tk.StringVar()
-        self.calendar_frame = CalendarFrame(self, controller_)
-        self.populate_frame(controller_.change_month_handler)
+        self.month_name.set(month.month_year)
+        self.calendar_frame = CalendarFrame(self, month.weeks, select_day_callback)
+        self.populate_frame(change_month_callback)
 
     def populate_frame(self, month_cmd):
         #this will populate the calendar page frame
@@ -88,30 +89,23 @@ class CalendarPage(ttk.Frame):
         prev_month_button.place(anchor='n', relx=.25, y=5, width=75, height=40)
         next_month_button.place(anchor='n', relx=.75, y=5, width=75, height=40)
 
-    def update_calendar(self, month_name: str):
-        self.month_name.set(month_name)
-        self.calendar_frame.populate_calendar_frame()
+    def update_calendar(self, month: model.Month):
+        self.month_name.set(month.month_year)
+        self.calendar_frame.populate_calendar_frame(month.weeks)
 
 
 class CalendarFrame(ttk.Frame):
     """this class holds the building and populating of the calendar frame for the calendar page"""
-    def __init__(self, parent, controller_):
-        #initialize the inheritance attributes
+    def __init__(self, parent, month_calendar: list[model.Week], select_day_callback):
         super().__init__(parent)
-        
-        self.cont = controller_
-        self._callback = controller_.calendar_button_clicked
+        self._callback = select_day_callback
+        self.populate_calendar_frame(month_calendar)
 
-        self.populate_calendar_frame()
-
-    def populate_calendar_frame(self):
+    def populate_calendar_frame(self, month_calendar):
         #clear the calendar frame
         for widget in self.winfo_children():
             widget.destroy()
 
-        #get the calendar button matrix
-        self.calendar_matrix = self.build_calendar_matrix()
-        
         #set row and column weight to keep size uniform
         for i in range(7):
             self.grid_columnconfigure(i, weight=1, uniform='calendar_column')
@@ -122,16 +116,18 @@ class CalendarFrame(ttk.Frame):
         for i, day in enumerate(days):
             ttk.Label(self, text=day).grid(row=0, column=i)
 
+        # get the calendar button matrix
+        calendar_matrix = self.build_calendar_matrix(month_calendar)
         #grid the calendar buttons from the calendar matrix
-        for r, week in enumerate(self.calendar_matrix, start=1):
+        for r, week in enumerate(calendar_matrix, start=1):
             for c, button in enumerate(week):
                 if button is not None:
                     button.grid(row=r, column=c, sticky='nsew')
-        
-    def build_calendar_matrix(self) -> list[list[tk.Button]]:
+
+    def build_calendar_matrix(self, month_calendar: list[model.Week]) -> list[list[tk.Button]]:
         """ Helper method for conversion of model.Calendar into tkinter Buttons grid """
         calendar_matrix = []
-        for week in self.cont.month_cal:
+        for week in month_calendar:
             new_week = []
             for day in week:
                 # some days in a week row may not belong to the current month

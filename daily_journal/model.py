@@ -50,6 +50,10 @@ class Month:
         ]
         return weeks
 
+    @property
+    def month_year(self) -> str:
+        return f'{self.name} {self.year}'
+
     def __getitem__(self, day_of_month: int) -> Day:
         """ Returns requested day of this month """
         if not 1 <= day_of_month <= self._number_of_days:
