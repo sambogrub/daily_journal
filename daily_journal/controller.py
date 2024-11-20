@@ -17,7 +17,7 @@ class Controller:
         #set the initial focus date and calendar matrix before UI is initialized, that way it is usable by UI
         self._focus_date = datetime.date.today()
         self._focus_month = self.set_focus_month(self._focus_date)
-        self._focus_day = self.get_init_day()
+        self._focus_day = self._focus_month[self._focus_date.day]
 
         #initialize the ui management after the initial business logic is complete
         self.ui_pages = self.init_ui_pages(self._focus_day)
@@ -48,14 +48,6 @@ class Controller:
     @focus_day.setter
     def focus_day(self, day: model.Day):
         self._focus_day = day
-
-    def get_init_day(self):
-        #this gets the intial day object to pass to the ui to fill in appropriate info at the beginning of the app
-        for week in self._focus_month.month_matrix:
-            for day in week:
-                if day != 0:
-                    if day.date.day == self._focus_date.day:
-                        return day
 
     #------------------------ focus month management ------------------
 
