@@ -15,7 +15,7 @@ class Day:
         self.date_string = self.get_date_string()
     
     def get_date_string(self):
-        return datetime.datetime.strftime(self.date, '%B %d, %Y')
+        return datetime.date.strftime(self.date, '%B %-d, %Y')
 
 
 class Month:
