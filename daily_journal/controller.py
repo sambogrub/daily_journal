@@ -22,16 +22,16 @@ class Controller:
         self.data_controller = DataController(repository_)
         self.root = root
 
-        #set the initial focus date and calendar matrix before UI is initialized, that way it is usable by UI
-        today = datetime.date.today()
-        self._focus_month = self.set_focus_month(today)
-        self._focus_day = self._focus_month[today.day]
-
+        #set the focus month at the beginning so it can be used by the ui. the focus day is set in the focus month setter
+        
+        self.focus_month = datetime.date.today()
+        
+    
         #initialize the ui management after the initial business logic is complete
         self.ui_pages = self.init_ui_pages(self._focus_day)
         self.show_page(PageId.MAIN)
 
-    #----------------------- focus date and day management -------------------
+    #----------------------- focus day management -------------------
 
     @property
     def focus_day(self) -> model.Day:
@@ -44,15 +44,23 @@ class Controller:
 
     #------------------------ focus month management ------------------
 
-    def set_focus_month(self, date):
-        #This gets the instance of the currently focused month, so it can be used in the calendar
-        return model.Month(date.month, date.year)
+    @property
+    def focus_month(self):
+        return self._focus_month
+    
+    @focus_month.setter
+    def focus_month(self, date):
+        self._focus_month = model.Month(date.month, date.year)
+        #get the focus day here so that it will stay in sync with the focus month
+        self._focus_day = self._focus_month[date.day]
 
-    def get_month_cal(self):
+    @property
+    def month_cal(self):
         #this returns the current month calendar reference matrix to be used in the ui to build the button matrix
         return self._focus_month.month_matrix
     
-    def get_month_year_str(self) -> str: 
+    @property
+    def month_year_str(self) -> str: 
         #wanted to handle the string formatting here in controller rather than in the ui
         return f'{self._focus_month.month_name} {self._focus_month.year}'
     
@@ -61,14 +69,14 @@ class Controller:
         #Since the calendar is used only to choose a previous date
         cur_date = datetime.date(self._focus_month.year, self._focus_month.month_num, 1)
         next_month = cur_date + relativedelta(months = 1)
-        self._focus_month = self.set_focus_month(next_month)
+        self.focus_month = next_month
 
     def rev_focus_month(self):
         #Had to have a way to keep track of the current date, so just used the focus date. 
         #Since the calendar is used only to choose a previous date
         cur_date = datetime.date(self._focus_month.year, self._focus_month.month_num, 1)
         next_month = cur_date + relativedelta(months = -1)
-        self._focus_month = self.set_focus_month(next_month)
+        self.focus_month = next_month
     
     #------------------------- UI management ---------------------
 

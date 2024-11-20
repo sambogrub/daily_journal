@@ -112,7 +112,7 @@ class CalendarPage(ttk.Frame):
 
     def set_month_name_var(self):
         #this sets the month name variable to the currently focused month
-        self.month_name_var.set(self.cont.get_month_year_str())
+        self.month_name_var.set(self.cont.month_year_str)
 
   
         
@@ -152,7 +152,7 @@ class CalendarFrame(ttk.Frame):
                     button.grid(row = r, column = c, sticky = 'nsew')
         
     def build_calendar_matrix(self) -> list[list]:
-        ref_cal_matrix = self.cont.get_month_cal()
+        ref_cal_matrix = self.cont.month_cal
         
         calendar_matrix = []
         for i, week in enumerate(ref_cal_matrix):
