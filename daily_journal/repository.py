@@ -69,21 +69,25 @@ class Entries:
             INSERT INTO {ENTRIES_TABLE} (date, entry)
             VALUES (?, ?)
         '''
-        formatted_date = date.isoformat() #make sure the date is formatted to iso; 'yyyy-mm-dd'
+        formatted_date = self.format_date(date)[0] #make sure the date is formatted to iso; 'yyyy-mm-dd'
 
         with self.cursor_manager() as cursor:
             cursor.execute(query, (formatted_date, text))
+            self.logger.info(f'Entry saved for date: {formatted_date}')
 
-    def get_entries(self, start_date: datetime.date, end_date: datetime.date) -> str:
+    def format_date(self, *dates: datetime.date) -> str:
+        #made this a fucntion so i dont have to constantly type out isoformat, and any format changes can be done in one place
+        return [date.isoformat() for date in dates]
+
+    def get_entries(self, start_date: datetime.date, end_date: datetime.date) -> list[tuple]:
         #retreives a specific entry with a given date
         query = f'''
             SELECT date, entry
             FROM {ENTRIES_TABLE}
             WHERE date BETWEEN ? and ?
             '''
-        f_start_date = start_date.isoformat() #make sure the date is formatted to iso: 'yyyy-mm-dd'
-        f_end_date = end_date.isoformat()
-
+        f_start_date, f_end_date = self.format_date(start_date, end_date)
+       
         with self.cursor_manager() as cursor:
             cursor.execute(query, (f_start_date, f_end_date))
             entries = cursor.fetchall()

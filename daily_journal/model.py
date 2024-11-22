@@ -3,6 +3,7 @@ as well as other class specific methods"""
 
 import datetime
 import calendar as cal
+from typing import Tuple
 
 import logger
 
@@ -16,6 +17,9 @@ class Day:
     
     def get_date_string(self):
         return datetime.date.strftime(self.date, '%B %-d, %Y')
+    
+    def set_entry(self, entry: str):
+        self.entry = entry
 
 
 class Month:
@@ -50,9 +54,25 @@ class Month:
                     month_matrix[i][j] = Day(date)
         return month_matrix
     
+    def populate_days_with_entries(self, entries: list[tuple]):
+        #this should take a bulk list of entries and parse them to the correct day
+        #this is in the month class to ensure any controller does not have to use this business logic
+        if entries:
+            for item in entries:
+                date, entry = item 
+                y, m, day_of_month = date.split('-')
+                day = self.__getitem__(int(day_of_month))
+                day.set_entry(entry)
+    
     def set_month_name(self):
         #this sets the string name for the month
         return cal.month_name[self.month_num]
+    
+    def start_and_end_dates(self) -> Tuple[datetime.date, datetime.date]:
+        #I put this here to ensure that the correct first and last day of the month are used
+        start_date = datetime.date(self.year, self.month_num, 1)
+        end_date = datetime.date(self.year, self.month_num, self._number_of_days)
+        return start_date, end_date
     
 
     

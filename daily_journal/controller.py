@@ -25,6 +25,8 @@ class Controller:
         #set the focus month at the beginning so it can be used by the ui. the focus day is set in the focus month setter
         
         self.focus_month = datetime.date.today()
+
+        self.distribute_entries_to_month()
         
     
         #initialize the ui management after the initial business logic is complete
@@ -70,6 +72,7 @@ class Controller:
         cur_date = datetime.date(self._focus_month.year, self._focus_month.month_num, 1)
         next_month = cur_date + relativedelta(months = 1)
         self.focus_month = next_month
+        self.distribute_entries_to_month()
 
     def rev_focus_month(self):
         #Had to have a way to keep track of the current date, so just used the focus date. 
@@ -77,6 +80,7 @@ class Controller:
         cur_date = datetime.date(self._focus_month.year, self._focus_month.month_num, 1)
         next_month = cur_date + relativedelta(months = -1)
         self.focus_month = next_month
+        self.distribute_entries_to_month()
     
     #------------------------- UI management ---------------------
 
@@ -99,18 +103,26 @@ class Controller:
         # and passes the date from the clicked day to the set focus date function
         day = self._focus_month.month_matrix[i][j]
         self.focus_day = day
-        self.focus_date = day.date
         self.ui_pages[PageId.MAIN].init_day_info(day)
         self.show_page(PageId.MAIN)
 
     #--------------------- Data Controller interaction ----------------------
 
-    def save_day(self):
+    def save_day(self, entry):
         #wanted to make sure to extract the needed data to pass to the data controller,
         #rather than pas the day object
         date = self._focus_day.date
-        entry = self._focus_day.entry
+        self._focus_day.set_entry(entry)
+        # entry = self._focus_day.entry
         self.data_controller.save_entry(date, entry)
+
+    def distribute_entries_to_month(self):
+        #this should just request the entries from the data controller and pass it directly to the month instance
+        start_date, end_date = self.focus_month.start_and_end_dates()
+        entries = self.data_controller.get_months_entries(start_date, end_date)
+        self._focus_month.populate_days_with_entries(entries)
+
+    
     
 
 class DataController:
@@ -121,5 +133,6 @@ class DataController:
     def save_entry(self, date, entry):
         self.entries.store_entry(date, entry)
 
-    def get_months_entries(self, start_date, end_date) -> dict:
-        entries_dict = self.entries.get_entries(start_date, end_date)
+    def get_months_entries(self, start_date: datetime.date, end_date: datetime.date) -> list[tuple]:
+        entries_list = self.entries.get_entries(start_date, end_date)
+        return entries_list

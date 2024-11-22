@@ -41,13 +41,15 @@ class MainPage(ttk.Frame):
         #initialize tk variables
         self.date_str = tk.StringVar()
 
-        self.init_day_info(init_day)
         self.populate_frame()
+        self.init_day_info(init_day)
     
     def init_day_info(self, day):
         #this takes the day object and passes the needed info to the proper locations
+        self.clear_textbox()
         self.set_date_str(day)
-
+        self.populate_textbox(day)
+        
     def set_date_str(self, day):
         #this sets the tk.stringvar to the currently focused date
         self.date_str.set(day.date_string)
@@ -57,14 +59,28 @@ class MainPage(ttk.Frame):
         self.date_label = ttk.Label(self,textvariable=self.date_str)
         self.cal_page_button = ttk.Button(self, text = 'Cal Page', command = lambda: self.cont.show_page('calendar'))
         self.entry_textbox = tk.Text(self)
-        self.save_entry_button = ttk.Button(self, text = 'Save Entry')
+        self.save_entry_button = ttk.Button(self, text = 'Save Entry', command = self.save_entry_button_clicked)
 
         #place the widgets
         self.date_label.place(anchor = 'n', relx = .5, y = 0, width = 150, height = 40)
         self.cal_page_button.place(anchor = 'ne', relx = .995, y = 0, width = 100, height = 40)
         self.entry_textbox.place(anchor = 'n', relx = .5, y = 45, relwidth= 1, relheight=.88)
         self.save_entry_button.place(anchor = 's', relx=.5, rely=.99, width = 125, height = 40)
-        
+    
+    def save_entry_button_clicked(self):
+        #this should grab the text in the tkinter text widget, then send it to the controller,
+        #the controller should already be aware of the days date
+        entry = self.entry_textbox.get('1.0', 'end-1c')
+        self.cont.save_day(entry)
+
+    def clear_textbox(self):
+        #this should be called any time a new date is selected
+        self.entry_textbox.delete('1.0', 'end')
+
+    def populate_textbox(self, day):
+        entry = day.entry
+        self.entry_textbox.insert('1.0', entry)
+
 
 class CalendarPage(ttk.Frame):
     """This is the second page. It has the calendar selection, the recent entries blurb,
