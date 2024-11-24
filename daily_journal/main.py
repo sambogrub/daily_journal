@@ -6,13 +6,11 @@ from tkinter import ttk
 from tkinter import messagebox
 import sqlite3
 
-import model
 import controller
 import repository
 import logger 
 import config
 from ui import StyleManager
-
 
 def db_connection(logger_: logger.logging.Logger) -> sqlite3.Connection:
     """initialize the db connection at the beginning so that it can be passed around as needed,
@@ -37,7 +35,6 @@ def db_connection_error(message: str):
     messagebox.showerror('Application error ', message)
     root.destroy()
     
-
 def main():
     """This function will initialize the logger, as well as the other modules. """ 
     #this sets up the logger at the very beginning of the app so when a logger instance is called its
