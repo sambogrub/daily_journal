@@ -64,23 +64,21 @@ class Entries:
             cursor.close()
 
     def store_entry(self, date: datetime.date, text: str):
-        #stores a new entry
         query = f'''
             INSERT INTO {ENTRIES_TABLE} (date, entry)
             VALUES (?, ?)
-        '''
-        formatted_date = self.format_date(date)[0] #make sure the date is formatted to iso; 'yyyy-mm-dd'
+            '''
+        formatted_date = self.format_date(date)[0]
 
         with self.cursor_manager() as cursor:
             cursor.execute(query, (formatted_date, text))
             self.logger.info(f'Entry saved for date: {formatted_date}')
 
     def format_date(self, *dates: datetime.date) -> str:
-        #made this a fucntion so i dont have to constantly type out isoformat, and any format changes can be done in one place
+        #made this a fucntion so any format changes can be done in one place
         return [date.isoformat() for date in dates]
 
     def get_entries(self, start_date: datetime.date, end_date: datetime.date) -> list[tuple]:
-        #retreives a specific entry with a given date
         query = f'''
             SELECT date, entry
             FROM {ENTRIES_TABLE}
@@ -91,7 +89,31 @@ class Entries:
         with self.cursor_manager() as cursor:
             cursor.execute(query, (f_start_date, f_end_date))
             entries = cursor.fetchall()
+            self.logger.info(f'Entries retrieve for month of {start_date.month}')
             return entries
+        
+    def update_entry(self, date: datetime.date, text: str):
+        query = f'''
+            UPDATE {ENTRIES_TABLE}
+            SET entry = ?
+            WHERE date = ?
+            '''
+        formatted_date = self.format_date(date)[0]
+
+        with self.cursor_manager() as cursor:
+            cursor.execute(query, (text, formatted_date))
+            self.logger.info(f'Entry updated for date: {formatted_date}')
+
+    def delete_entry(self, date: datetime.date):
+        query = f'''
+            DELETE FROM {ENTRIES_TABLE}
+            WHERE = ?
+            '''
+        formatted_date = self.format_date(date)[0]
+
+        with self.cursor_manager() as cursor:
+            cursor.execute(query, (formatted_date, ))
+            self.logger.info(f'Entry deleted for date: {formatted_date}')
         
         
         

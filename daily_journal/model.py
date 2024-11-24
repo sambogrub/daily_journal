@@ -21,6 +21,9 @@ class Day:
     def set_entry(self, entry: str):
         self.entry = entry
 
+    def delete_entry(self):
+        self.entry = ''
+
 
 class Month:
     """Month class to hold all days and month calendar"""
