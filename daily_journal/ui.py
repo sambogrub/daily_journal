@@ -33,7 +33,7 @@ class MainPage(ttk.Frame):
         super().__init__(root)
 
         #place the main page frame
-        self.place(x = 0, y = 0, relwidth=1, relheight=1)
+        self.place(x=0, y=0, relwidth=1, relheight=1)
 
         #name the passed controller instance
         self.cont = controller_
@@ -57,15 +57,15 @@ class MainPage(ttk.Frame):
     def populate_frame(self):
         #this populates the frame with the date, text entry box, save entry button, as well as the calendar page button
         self.date_label = ttk.Label(self,textvariable=self.date_str)
-        self.cal_page_button = ttk.Button(self, text = 'Cal Page', command = lambda: self.cont.show_page('calendar'))
-        self.entry_textbox = tk.Text(self)
-        self.save_entry_button = ttk.Button(self, text = 'Save Entry', command = self.save_entry_button_clicked)
+        self.cal_page_button = ttk.Button(self, text='Cal Page', command=lambda: self.cont.show_page('calendar'))
+        self.entry_textbox = tk.Text(self, wrap='none')
+        self.save_entry_button = ttk.Button(self, text='Save Entry', command=self.save_entry_button_clicked)
 
         #place the widgets
-        self.date_label.place(anchor = 'n', relx = .5, y = 0, width = 150, height = 40)
-        self.cal_page_button.place(anchor = 'ne', relx = .995, y = 0, width = 100, height = 40)
-        self.entry_textbox.place(anchor = 'n', relx = .5, y = 45, relwidth= 1, relheight=.88)
-        self.save_entry_button.place(anchor = 's', relx=.5, rely=.99, width = 125, height = 40)
+        self.date_label.place(anchor='n', relx=.5, y=0, width=150, height=40)
+        self.cal_page_button.place(anchor='ne', relx=.995, y=0, width=100, height=40)
+        self.entry_textbox.place(anchor='n', relx=.5, y=45, relwidth=1, relheight=.88)
+        self.save_entry_button.place(anchor='s', relx=.5, rely=.99, width=125, height=40)
     
     def save_entry_button_clicked(self):
         #this should grab the text in the tkinter text widget, then send it to the controller,
@@ -89,7 +89,7 @@ class CalendarPage(ttk.Frame):
          #initialize the frame inheritance
         super().__init__(root)
         #place the main page frame
-        self.place(anchor = 'ne',relx=1, y = 0, relwidth=.85, relheight=1)
+        self.place(anchor='ne',relx=1, y=0, relwidth=.85, relheight=1)
 
         #name the passed controller instance
         self.cont = controller_
@@ -106,15 +106,15 @@ class CalendarPage(ttk.Frame):
     def populate_frame(self):
         #this will populate the calendar page frame
         self.calendar_label = ttk.Label(self, textvariable=self.month_name_var)
-        self.prev_month_button = ttk.Button(self, text = 'Prev', command = self.reverse_calendar)
-        self.next_month_button = ttk.Button(self, text = 'Next', command = self.advance_calendar)
+        self.prev_month_button = ttk.Button(self, text='Prev', command=self.reverse_calendar)
+        self.next_month_button = ttk.Button(self, text='Next', command=self.advance_calendar)
         self.calendar_frame = CalendarFrame(self, self.cont)
 
         #place the widgets
-        self.calendar_label.place(anchor = 'n', relx = .5, y = 5, width = 120, height = 40)
-        self.calendar_frame.place(anchor = 'center', relx = .5, rely =.25, width = 300, height = 300)
-        self.prev_month_button.place(anchor = 'n', relx = .25, y = 5, width = 75, height = 40)
-        self.next_month_button.place(anchor = 'n', relx = .75, y = 5, width = 75, height = 40)
+        self.calendar_label.place(anchor='n', relx=.5, y=5, width=120, height=40)
+        self.calendar_frame.place(anchor='center', relx=.5, rely=25, width=300, height=300)
+        self.prev_month_button.place(anchor='n', relx=.25, y=5, width=75, height=40)
+        self.next_month_button.place(anchor='n', relx=.75, y=5, width=75, height=40)
 
     def advance_calendar(self):
         self.cont.adv_focus_month()   
@@ -153,19 +153,19 @@ class CalendarFrame(ttk.Frame):
         
         #set row and column weight to keep size uniform
         for i in range(7):
-            self.grid_columnconfigure(i,weight = 1, uniform = 'calendar_column')
-            self.grid_rowconfigure(i, weight = 1, uniform = 'calendar_row')
+            self.grid_columnconfigure(i,weight=1, uniform='calendar_column')
+            self.grid_rowconfigure(i, weight=1, uniform='calendar_row')
 
         #build and grid the days of the week labels        
         days = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun']
         for i,day in enumerate(days):
-            ttk.Label(self, text = day).grid(row = 0, column = i)
+            ttk.Label(self, text = day).grid(row=0, column=i)
 
         #grid the calendar buttons from the calendar matrix
-        for r, week in enumerate(self.calendar_matrix, start = 1):
+        for r, week in enumerate(self.calendar_matrix, start=1):
             for c, button in enumerate(week):
                 if button is not None:
-                    button.grid(row = r, column = c, sticky = 'nsew')
+                    button.grid(row=r, column=c, sticky='nsew')
         
     def build_calendar_matrix(self) -> list[list]:
         ref_cal_matrix = self.cont.month_cal
@@ -178,7 +178,7 @@ class CalendarFrame(ttk.Frame):
                 if day == 0:
                     new_week.append(None)
                 else:
-                    button = ttk.Button(self, text = day.date.day, command = partial(self.cont.calendar_button_clicked, i, j))
+                    button = ttk.Button(self, text = day.date.day, command=partial(self.cont.calendar_button_clicked, i, j))
                     new_week.append(button)
             calendar_matrix.append(new_week)
         return calendar_matrix
