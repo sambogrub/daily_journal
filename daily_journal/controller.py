@@ -106,6 +106,13 @@ class Controller:
         self.ui_pages[PageId.MAIN].init_day_info(day)
         self.show_page(PageId.MAIN)
 
+    def today_clicked(self):
+        self.focus_month = datetime.date.today()
+        self.distribute_entries_to_month()
+        self.ui_pages[PageId.MAIN].init_day_info(self._focus_day)
+        self.ui_pages[PageId.CALENDAR].populate_calendar_frame()
+        self.show_page(PageId.MAIN)
+
     #--------------------- Data Controller interaction ----------------------
 
     def save_day(self, entry):

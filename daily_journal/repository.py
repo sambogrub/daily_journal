@@ -89,7 +89,7 @@ class Entries:
         with self.cursor_manager() as cursor:
             cursor.execute(query, (f_start_date, f_end_date))
             entries = cursor.fetchall()
-            self.logger.info(f'Entries retrieve for month of {start_date.month}')
+            self.logger.info(f'Entries retrieved for month of {start_date.month}')
             return entries
         
     def update_entry(self, date: datetime.date, text: str):

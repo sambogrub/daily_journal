@@ -45,7 +45,7 @@ class Month:
         week_index, day_index = divmod(matrix_index, 7)
         return self.month_matrix[week_index][day_index]
 
-    def build_calendar_matrix(self):
+    def build_calendar_matrix(self) -> list[list]:
         month_matrix = cal.monthcalendar(self.year, self.month_num)
         if len(month_matrix) < 6:
             month_matrix.append([0,0,0,0,0,0,0])
