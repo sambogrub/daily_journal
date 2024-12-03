@@ -116,7 +116,7 @@ class CalendarPage(ttk.Frame):
         self.prev_month_button = ttk.Button(self, text='Prev', command=self.reverse_calendar)
         self.next_month_button = ttk.Button(self, text='Next', command=self.advance_calendar)
         self.calendar_frame = CalendarFrame(self, self.cont)
-        self.populate_calendar_frame()
+        self.refresh_calendar_frame()
         self.today_button = ttk.Button(self, text='Today', command=self.cont.today_clicked)
 
         
@@ -126,7 +126,7 @@ class CalendarPage(ttk.Frame):
         self.next_month_button.place(anchor='n', relx=.75, y=5, width=75, height=40)
         self.today_button.place(x=5, rely=.15, width=50, height=45)
 
-    def populate_calendar_frame(self):
+    def refresh_calendar_frame(self):
         """This function was made separate from the calendar frame class to make it easier for the controller to call"""
         self.calendar_frame.populate_calendar_frame()
         self.set_month_name_var()
@@ -154,6 +154,7 @@ class CalendarFrame(ttk.Frame):
         self.log = logger.journal_logger()
 
         self.cont = controller_
+        self._callback = controller_.calendar_button_clicked
 
     def populate_calendar_frame(self):
         """This function is called by the calendar page class to allow the controller easier access"""
@@ -179,18 +180,22 @@ class CalendarFrame(ttk.Frame):
                     button.grid(row=r, column=c, sticky='nsew')
         
     def build_calendar_matrix(self) -> list[list]:
-        ref_cal_matrix = self.cont.month_cal
+        """Helper Method for conversion of model.Month.month_matrix into tkinter button grid"""
         
         calendar_matrix = []
-        for i, week in enumerate(ref_cal_matrix):
+        for week in self.cont.month_cal:
             new_week = []
-            for j, day in enumerate(week):
-                
-                if day == 0:
-                    new_week.append(None)
-                else:
-                    button = ttk.Button(self, text = day.date.day, command=partial(self.cont.calendar_button_clicked, i, j))
+            for day in week:
+                if day:
+                    day_ = day.date.day
+                    button = ttk.Button(
+                        self, 
+                        text = day_, 
+                        command=lambda d=day_: self._callback(d)
+                        )
                     new_week.append(button)
+                else:
+                    new_week.append(None)
             calendar_matrix.append(new_week)
         
         return calendar_matrix
