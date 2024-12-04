@@ -199,6 +199,14 @@ class CalendarFrame(ttk.Frame):
             calendar_matrix.append(new_week)
         
         return calendar_matrix
+    
+
+class RecentEntriesFrame(ttk.Frame):
+    def __init__(self, parent, controller_) -> None:
+        super().__init__(parent)
+        self.log = logger.journal_logger()
+        self.cont = controller_
+
 
 class OptionsPage(ttk.Frame):
     """This is the third page. It will have the basic options that can be changed.

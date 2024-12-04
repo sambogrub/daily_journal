@@ -23,12 +23,9 @@ class Controller:
         self.root = root
 
         #set the focus month at the beginning so it can be used by the ui. the focus day is set in the focus month setter
-        
         self.focus_month = datetime.date.today()
-
         self.distribute_entries_to_month()
         
-    
         #initialize the ui management after the initial business logic is complete
         self.ui_pages = self.init_ui_pages(self._focus_day)
         self.show_page(PageId.MAIN)
@@ -81,6 +78,7 @@ class Controller:
         next_month = cur_date + relativedelta(months = -1)
         self.focus_month = next_month
         self.distribute_entries_to_month()
+        self.get_recent_entries()
     
     #------------------------- UI management ---------------------
 
@@ -112,9 +110,26 @@ class Controller:
         self.ui_pages[PageId.CALENDAR].refresh_calendar_frame()
         self.show_page(PageId.MAIN)
 
+    def get_recent_entries(self) -> dict:
+        entries_dict = {}
+        index = 1
+
+        while len(entries_dict) <= 5:
+            check_date = self._focus_day.date + relativedelta(days = -index)
+            check_day_of_month = check_date.day
+            check_day = self._focus_month[check_day_of_month]
+            if check_day.entry:
+                entries_dict[check_day.date_string] = check_day.entry
+            index += 1
+            if check_date.day == 1:
+                break
+
+        print(entries_dict)
+
+
     #--------------------- Data Controller interaction ----------------------
 
-    def save_day(self, entry):
+    def save_day(self, entry) -> None:
         #wanted to make sure to extract the needed data to pass to the data controller,
         #rather than pass the day object
         date = self._focus_day.date
@@ -124,12 +139,12 @@ class Controller:
             self.data_controller.save_entry(date, entry)
         self._focus_day.set_entry(entry)
 
-    def delete_entry(self, date: datetime.date):
+    def delete_entry(self, date: datetime.date) -> None:
         if self._focus_day.entry:
             self.data_controller.delete_entry(date)
             self._focus_day.delete_entry()
 
-    def distribute_entries_to_month(self):
+    def distribute_entries_to_month(self) -> None:
         #this should just request the entries from the data controller and pass it directly to the month instance
         start_date, end_date = self.focus_month.start_and_end_dates()
         entries = self.data_controller.get_months_entries(start_date, end_date)
@@ -141,20 +156,20 @@ class Controller:
 class DataController:
     """This controller will interact with the repository and pass data to the main controller
     The data and main controller are separated in case the data controller needs to do more with the repository"""
-    def __init__(self, repository_):
+    def __init__(self, repository_) -> None:
         self.entries = repository_
 
-    def save_entry(self, date: datetime.date, entry: str):
+    def save_entry(self, date: datetime.date, entry: str) -> None:
         self.entries.store_entry(date, entry)
 
-    def update_entry(self, date: datetime.date, entry: str):
+    def update_entry(self, date: datetime.date, entry: str) -> None:
         self.entries.update_entry(date, entry)
     
     def get_months_entries(self, start_date: datetime.date, end_date: datetime.date) -> list[tuple]:
         entries_list = self.entries.get_entries(start_date, end_date)
         return entries_list
     
-    def delete_entry(self, date: datetime.date):
+    def delete_entry(self, date: datetime.date) -> None:
         self.entries.delete_entry(date)
     
     

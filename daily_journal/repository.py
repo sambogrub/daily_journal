@@ -107,7 +107,7 @@ class Entries:
     def delete_entry(self, date: datetime.date):
         query = f'''
             DELETE FROM {ENTRIES_TABLE}
-            WHERE = ?
+            WHERE date = ?
             '''
         formatted_date = self.format_date(date)[0]
 
