@@ -57,12 +57,9 @@ class Month:
     def populate_days_with_entries(self, entries: list[tuple]):
         #this should take a bulk list of entries and parse them to the correct day
         #this is in the month class to ensure any controller does not have to use this business logic
-        if entries:
-            for item in entries:
-                date, entry = item 
-                y, m, day_of_month = date.split('-')
-                day = self.__getitem__(int(day_of_month))
-                day.entry = entry
+        for date, entry in entries:
+            day_of_month = int(date.split('-')[-1])
+            self[day_of_month].entry = entry
     
     def set_month_name(self):
         #this sets the string name for the month
