@@ -30,7 +30,7 @@ def db_connection(logger_: logger.logging.Logger) -> sqlite3.Connection:
 
 def db_connection_error(message: str):
     """This function shows a popup error window if the database connection has an issue"""
-    root = tk.TK()
+    root = tk.Tk()
     root.withdraw()
     messagebox.showerror('Application error ', message)
     root.destroy()
