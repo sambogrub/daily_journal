@@ -116,12 +116,12 @@ class Controller:
             self.data_controller.update_entry(date, entry)
         else:
             self.data_controller.save_entry(date, entry)
-        self._focus_day.set_entry(entry)
+        self._focus_day.entry = entry
 
     def delete_entry(self, date: datetime.date):
         if self._focus_day.entry:
             self.data_controller.delete_entry(date)
-            self._focus_day.delete_entry()
+            self._focus_day.clear_entry()
 
     def distribute_entries_to_month(self):
         #this should just request the entries from the data controller and pass it directly to the month instance

@@ -13,15 +13,12 @@ class Day:
     def __init__(self, date: datetime.date):
         self.date = date
         self.entry = ''
-        self.date_string = self.get_date_string()
-    
-    def get_date_string(self) -> str:
-        return f'{self.date:%B} {self.date.day}, {self.date.year}'
-    
-    def set_entry(self, entry: str):
-        self.entry = entry
 
-    def delete_entry(self):
+    @property
+    def date_string(self) -> str:
+        return f'{self.date:%B} {self.date.day}, {self.date.year}'
+
+    def clear_entry(self):
         self.entry = ''
 
 
@@ -65,7 +62,7 @@ class Month:
                 date, entry = item 
                 y, m, day_of_month = date.split('-')
                 day = self.__getitem__(int(day_of_month))
-                day.set_entry(entry)
+                day.entry = entry
     
     def set_month_name(self):
         #this sets the string name for the month
