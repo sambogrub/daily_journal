@@ -67,7 +67,8 @@ class Entries:
         finally:
             cursor.close()
 
-    def format_date(self, *dates: datetime.date) -> list[str]:
+    @staticmethod
+    def format_date(*dates: datetime.date) -> list[str]:
         #made this a function so any format changes can be done in one place
         return [date.isoformat() for date in dates]
 
