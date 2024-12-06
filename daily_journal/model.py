@@ -41,8 +41,7 @@ class Month:
     def __getitem__(self, day_of_month) -> Day:
         """Returns the requested day object. implementing this here ensures encapsulation"""
         if not 1 <= day_of_month <= self._number_of_days: #make sure the day of month requested is in the number of days range
-            self.logger_.info(f'IndexError at Month __getitem__: day_of_month given, {day_of_month}, was outside of range 1 to {self._number_of_days}')
-            day_of_month = self._number_of_days #set the day of month to the last day if it is out of the range
+            raise IndexError(f'day_of_month must be between 1 and {self._number_of_days}, but was {day_of_month}.')
         matrix_index = self._first_day + day_of_month - 1
         week_index, day_index = divmod(matrix_index, 7)
         return self.month_matrix[week_index][day_index]
