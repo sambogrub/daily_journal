@@ -97,12 +97,12 @@ class Entries:
             self.logger.info(f'Entries retrieve for month of {start_date.month}')
             return entries
 
-    def delete(self, date: datetime.date) -> None:
+    def delete(self, day: model.Day) -> None:
         query = f'''
             DELETE FROM {ENTRIES_TABLE}
             WHERE = ?
             '''
-        formatted_date = self.format_date(date)[0]
+        formatted_date = self.format_date(day.date)[0]
 
         with self.cursor_manager() as cursor:
             cursor.execute(query, (formatted_date, ))
