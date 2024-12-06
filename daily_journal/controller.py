@@ -47,7 +47,7 @@ class Controller:
     #------------------------ focus month management ------------------
 
     @property
-    def focus_month(self):
+    def focus_month(self) -> model.Month:
         return self._focus_month
     
     @focus_month.setter
@@ -57,7 +57,7 @@ class Controller:
         self._focus_day = self._focus_month[date.day]
 
     @property
-    def month_cal(self):
+    def month_cal(self) -> list[list[model.Day]]:
         #this returns the current month calendar reference matrix to be used in the ui to build the button matrix
         return self._focus_month.month_matrix
     

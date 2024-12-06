@@ -3,7 +3,6 @@ as well as other class specific methods"""
 
 import datetime
 import calendar as cal
-from typing import Tuple
 
 import logger
 
@@ -18,13 +17,13 @@ class Day:
     def date_string(self) -> str:
         return f'{self.date:%B} {self.date.day}, {self.date.year}'
 
-    def clear_entry(self):
+    def clear_entry(self) -> None:
         self.entry = ''
 
 
 class Month:
     """Month class to hold all days and month calendar"""
-    def __init__(self, month_num: int, year: int) -> list[list]:
+    def __init__(self, month_num: int, year: int):
         self.month_num = month_num
         self.year = year
         self.month_matrix = self.build_calendar_matrix()
@@ -42,7 +41,7 @@ class Month:
         week_index, day_index = divmod(matrix_index, 7)
         return self.month_matrix[week_index][day_index]
 
-    def build_calendar_matrix(self):
+    def build_calendar_matrix(self) -> list[list[Day]]:
         month_matrix = cal.monthcalendar(self.year, self.month_num)
         if len(month_matrix) < 6:
             month_matrix.append([0,0,0,0,0,0,0])
@@ -54,24 +53,20 @@ class Month:
                     month_matrix[i][j] = Day(date)
         return month_matrix
     
-    def populate_days_with_entries(self, entries: list[tuple]):
+    def populate_days_with_entries(self, entries: list[tuple[str, str]]) -> None:
         #this should take a bulk list of entries and parse them to the correct day
         #this is in the month class to ensure any controller does not have to use this business logic
         for date, entry in entries:
             day_of_month = int(date.split('-')[-1])
             self[day_of_month].entry = entry
     
-    def set_month_name(self):
+    def set_month_name(self) -> str:
         #this sets the string name for the month
         return cal.month_name[self.month_num]
     
-    def start_and_end_dates(self) -> Tuple[datetime.date, datetime.date]:
+    def start_and_end_dates(self) -> tuple[datetime.date, datetime.date]:
         #I put this here to ensure that the correct first and last day of the month are used
         start_date = datetime.date(self.year, self.month_num, 1)
         end_date = datetime.date(self.year, self.month_num, self._number_of_days)
         return start_date, end_date
-    
 
-    
-
-    

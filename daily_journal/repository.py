@@ -74,11 +74,11 @@ class Entries:
             cursor.execute(query, (formatted_date, text))
             self.logger.info(f'Entry saved for date: {formatted_date}')
 
-    def format_date(self, *dates: datetime.date) -> str:
-        #made this a fucntion so any format changes can be done in one place
+    def format_date(self, *dates: datetime.date) -> list[str]:
+        #made this a function so any format changes can be done in one place
         return [date.isoformat() for date in dates]
 
-    def get_entries(self, start_date: datetime.date, end_date: datetime.date) -> list[tuple]:
+    def get_entries(self, start_date: datetime.date, end_date: datetime.date) -> list[tuple[str, str]]:
         query = f'''
             SELECT date, entry
             FROM {ENTRIES_TABLE}
@@ -92,7 +92,7 @@ class Entries:
             self.logger.info(f'Entries retrieve for month of {start_date.month}')
             return entries
         
-    def update_entry(self, date: datetime.date, text: str):
+    def update_entry(self, date: datetime.date, text: str) -> None:
         query = f'''
             UPDATE {ENTRIES_TABLE}
             SET entry = ?
@@ -104,7 +104,7 @@ class Entries:
             cursor.execute(query, (text, formatted_date))
             self.logger.info(f'Entry updated for date: {formatted_date}')
 
-    def delete_entry(self, date: datetime.date):
+    def delete_entry(self, date: datetime.date) -> None:
         query = f'''
             DELETE FROM {ENTRIES_TABLE}
             WHERE = ?
@@ -114,6 +114,4 @@ class Entries:
         with self.cursor_manager() as cursor:
             cursor.execute(query, (formatted_date, ))
             self.logger.info(f'Entry deleted for date: {formatted_date}')
-        
-        
         
