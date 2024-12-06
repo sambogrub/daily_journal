@@ -17,11 +17,14 @@ def init_entries_table(conn: sqlite3.Connection, logger_: logger.logging.Logger)
     entry TEXT
     )'''
 
+    index_query = '''CREATE UNIQUE INDEX IF NOT EXISTS idx_entries_date ON entries(date)'''
+
     # create the table, logging any basic error
     cursor = None
     try:
         cursor = conn.cursor()
         cursor.execute(entries_query)
+        cursor.execute(index_query)
         conn.commit()
     except sqlite3.IntegrityError:
         conn.rollback()
