@@ -99,9 +99,9 @@ class Entries:
         return days
 
     def delete(self, day: model.Day) -> None:
-        query = f'''
-            DELETE FROM {ENTRIES_TABLE}
-            WHERE = ?
+        query = '''
+            DELETE FROM entries
+            WHERE date = ?
             '''
         formatted_date = self.format_date(day.date)[0]
 
