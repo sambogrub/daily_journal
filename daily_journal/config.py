@@ -5,7 +5,6 @@ WINDOW_RESIZEABLE = (False,False)
 
 # DB section
 DB_NAME = 'journal.db'
-ENTRIES_TABLE = 'entries'
 
 
 # Logging section

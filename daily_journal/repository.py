@@ -1,18 +1,16 @@
 """Module will hold the entries repository, as well as the table initialization function"""
 
 import sqlite3
-import logger
-import datetime
 from contextlib import contextmanager
 
+import logger
 import model
-from config import ENTRIES_TABLE
 
 
 def init_entries_table(conn: sqlite3.Connection, logger_: logger.logging.Logger) -> None:
     """This initializes the entries table"""
     entries_query = f'''
-    CREATE TABLE IF NOT EXISTS {ENTRIES_TABLE} (
+    CREATE TABLE IF NOT EXISTS entries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     date DATE UNIQUE,
     entry TEXT
@@ -27,10 +25,7 @@ def init_entries_table(conn: sqlite3.Connection, logger_: logger.logging.Logger)
         cursor.execute(entries_query)
         cursor.execute(index_query)
         conn.commit()
-    except sqlite3.IntegrityError:
-        conn.rollback()
-        logger_.exception('SQLite error:')
-    except Exception:
+    except sqlite3.Error:
         conn.rollback()
         logger_.exception('SQLite error:')
         raise
@@ -68,9 +63,8 @@ class Entries:
             cursor.close()
 
     @staticmethod
-    def format_date(*dates: datetime.date) -> list[str]:
-        #made this a function so any format changes can be done in one place
-        return [date.isoformat() for date in dates]
+    def format_date(day: model.Day):
+        return day.date.isoformat()
 
     def save(self, day: model.Day) -> None:
         """ Method performs upsert (update or insert) of given day into the entries table """
@@ -79,7 +73,7 @@ class Entries:
             ON CONFLICT(date)
             DO UPDATE SET entry = EXCLUDED.entry
          '''
-        formatted_date = self.format_date(day.date)[0]
+        formatted_date = self.format_date(day)
         with self.cursor_manager() as cursor:
             cursor.execute(query, (formatted_date, day.entry))
             self.logger.info(f'Entry saved for date {formatted_date}')
@@ -103,7 +97,7 @@ class Entries:
             DELETE FROM entries
             WHERE date = ?
             '''
-        formatted_date = self.format_date(day.date)[0]
+        formatted_date = self.format_date(day)
 
         with self.cursor_manager() as cursor:
             cursor.execute(query, (formatted_date, ))
