@@ -121,7 +121,6 @@ class Controller:
 
     def distribute_entries_to_month(self):
         #this should just request the entries from the data controller and pass it directly to the month instance
-        start_date, end_date = self.focus_month.start_and_end_dates()
-        entries = self._entries.get_by_dates(start_date, end_date)
-        self._focus_month.populate_days_with_entries(entries)
+        days = self._entries.get_by_month(self._focus_month)
+        self._focus_month.merge_days(days)
 

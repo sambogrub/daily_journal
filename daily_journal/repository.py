@@ -84,19 +84,19 @@ class Entries:
             cursor.execute(query, (formatted_date, day.entry))
             self.logger.info(f'Entry saved for date {formatted_date}')
 
-    def get_by_dates(self, start_date: datetime.date, end_date: datetime.date) -> list[tuple[str, str]]:
-        query = f'''
-            SELECT date, entry
-            FROM {ENTRIES_TABLE}
-            WHERE date BETWEEN ? and ?
-            '''
-        f_start_date, f_end_date = self.format_date(start_date, end_date)
-       
+    def get_by_month(self, month: model.Month) -> list[model.Day]:
+        """ Method fetches all entries for given month converted to Day objects """
+        query = '''
+                SELECT date, entry
+                FROM entries
+                WHERE STRFTIME('%Y-%m', date) = ?
+                '''
+        month_str = f'{month.year}-{month.month_num:02}'
         with self.cursor_manager() as cursor:
-            cursor.execute(query, (f_start_date, f_end_date))
-            entries = cursor.fetchall()
-            self.logger.info(f'Entries retrieve for month of {start_date.month}')
-            return entries
+            cursor.execute(query, (month_str,))
+            days = [model.str_to_day(*entry) for entry in cursor.fetchall()]
+        self.logger.info('Entries retrieved for month: %s', month_str)
+        return days
 
     def delete(self, day: model.Day) -> None:
         query = f'''

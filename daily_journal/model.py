@@ -9,9 +9,9 @@ import logger
 
 class Day:
     """Day class to hold all entries and future parts"""
-    def __init__(self, date: datetime.date):
+    def __init__(self, date: datetime.date, entry: str = ''):
         self.date = date
-        self.entry = ''
+        self.entry = entry
 
     @property
     def date_string(self) -> str:
@@ -20,6 +20,12 @@ class Day:
     def clear_entry(self) -> None:
         self.entry = ''
 
+def str_to_day(date: str, entry: str) -> Day:
+    """
+    Helper factory method creating Day object from string representation
+    of date (iso-formatted) and an entry value
+    """
+    return Day(datetime.date.fromisoformat(date), entry)
 
 class Month:
     """Month class to hold all days and month calendar"""
@@ -53,20 +59,12 @@ class Month:
                     month_matrix[i][j] = Day(date)
         return month_matrix
     
-    def populate_days_with_entries(self, entries: list[tuple[str, str]]) -> None:
-        #this should take a bulk list of entries and parse them to the correct day
-        #this is in the month class to ensure any controller does not have to use this business logic
-        for date, entry in entries:
-            day_of_month = int(date.split('-')[-1])
-            self[day_of_month].entry = entry
+    def merge_days(self, days: list[Day]) -> None:
+        """ Updates this month's days with new values from the given list of days """
+        for day_ in days:
+            self[day_.date.day].entry = day_.entry
     
     def set_month_name(self) -> str:
         #this sets the string name for the month
         return cal.month_name[self.month_num]
-    
-    def start_and_end_dates(self) -> tuple[datetime.date, datetime.date]:
-        #I put this here to ensure that the correct first and last day of the month are used
-        start_date = datetime.date(self.year, self.month_num, 1)
-        end_date = datetime.date(self.year, self.month_num, self._number_of_days)
-        return start_date, end_date
 
