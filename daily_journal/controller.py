@@ -19,7 +19,7 @@ class Controller:
     """Controller for Daily Journal. Will be responsible for interactions with the repository,
     passing entry objects between ui and the repository"""
     def __init__(self, repository_, root: tk.Tk):
-        self.data_controller = DataController(repository_)
+        self._entries = repository_
         self.root = root
 
         #set the focus month at the beginning so it can be used by the ui. the focus day is set in the focus month setter
@@ -113,42 +113,19 @@ class Controller:
         #rather than pass the day object
         date = self._focus_day.date
         if self._focus_day.entry:
-            self.data_controller.update_entry(date, entry)
+            self._entries.update_entry(date, entry)
         else:
-            self.data_controller.save_entry(date, entry)
+            self._entries.save_entry(date, entry)
         self._focus_day.entry = entry
 
     def delete_entry(self, date: datetime.date):
         if self._focus_day.entry:
-            self.data_controller.delete_entry(date)
+            self._entries.delete_entry(date)
             self._focus_day.clear_entry()
 
     def distribute_entries_to_month(self):
         #this should just request the entries from the data controller and pass it directly to the month instance
         start_date, end_date = self.focus_month.start_and_end_dates()
-        entries = self.data_controller.get_months_entries(start_date, end_date)
+        entries = self._entries.get_entries(start_date, end_date)
         self._focus_month.populate_days_with_entries(entries)
 
-    
-    
-
-class DataController:
-    """This controller will interact with the repository and pass data to the main controller
-    The data and main controller are separated in case the data controller needs to do more with the repository"""
-    def __init__(self, repository_):
-        self.entries = repository_
-
-    def save_entry(self, date: datetime.date, entry: str):
-        self.entries.store_entry(date, entry)
-
-    def update_entry(self, date: datetime.date, entry: str):
-        self.entries.update_entry(date, entry)
-    
-    def get_months_entries(self, start_date: datetime.date, end_date: datetime.date) -> list[tuple]:
-        entries_list = self.entries.get_entries(start_date, end_date)
-        return entries_list
-    
-    def delete_entry(self, date: datetime.date):
-        self.entries.delete_entry(date)
-    
-    
