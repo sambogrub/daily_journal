@@ -83,7 +83,7 @@ class Entries:
             cursor.execute(query, (formatted_date, day.entry))
             self.logger.info(f'Entry saved for date {formatted_date}')
 
-    def get_entries(self, start_date: datetime.date, end_date: datetime.date) -> list[tuple[str, str]]:
+    def get_by_dates(self, start_date: datetime.date, end_date: datetime.date) -> list[tuple[str, str]]:
         query = f'''
             SELECT date, entry
             FROM {ENTRIES_TABLE}
@@ -97,7 +97,7 @@ class Entries:
             self.logger.info(f'Entries retrieve for month of {start_date.month}')
             return entries
 
-    def delete_entry(self, date: datetime.date) -> None:
+    def delete(self, date: datetime.date) -> None:
         query = f'''
             DELETE FROM {ENTRIES_TABLE}
             WHERE = ?
