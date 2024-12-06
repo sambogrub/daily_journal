@@ -76,7 +76,7 @@ class Entries:
         formatted_date = self.format_date(day)
         with self.cursor_manager() as cursor:
             cursor.execute(query, (formatted_date, day.entry))
-            self.logger.info(f'Entry saved for date {formatted_date}')
+            self.logger.info('Entry saved for date %s', formatted_date)
 
     def get_by_month(self, month: model.Month) -> list[model.Day]:
         """ Method fetches all entries for given month converted to Day objects """
@@ -101,5 +101,5 @@ class Entries:
 
         with self.cursor_manager() as cursor:
             cursor.execute(query, (formatted_date, ))
-            self.logger.info(f'Entry deleted for date: {formatted_date}')
+            self.logger.info('Entry deleted for date: %s', formatted_date)
         
