@@ -5,6 +5,7 @@ import logger
 import datetime
 from contextlib import contextmanager
 
+import model
 from config import ENTRIES_TABLE
 
 
@@ -66,20 +67,21 @@ class Entries:
         finally:
             cursor.close()
 
-    def store_entry(self, date: datetime.date, text: str):
-        query = f'''
-            INSERT INTO {ENTRIES_TABLE} (date, entry)
-            VALUES (?, ?)
-            '''
-        formatted_date = self.format_date(date)[0]
-
-        with self.cursor_manager() as cursor:
-            cursor.execute(query, (formatted_date, text))
-            self.logger.info(f'Entry saved for date: {formatted_date}')
-
     def format_date(self, *dates: datetime.date) -> list[str]:
         #made this a function so any format changes can be done in one place
         return [date.isoformat() for date in dates]
+
+    def save(self, day: model.Day) -> None:
+        """ Method performs upsert (update or insert) of given day into the entries table """
+        query = '''
+            INSERT INTO entries (date, entry) VALUES (?, ?)
+            ON CONFLICT(date)
+            DO UPDATE SET entry = EXCLUDED.entry
+         '''
+        formatted_date = self.format_date(day.date)[0]
+        with self.cursor_manager() as cursor:
+            cursor.execute(query, (formatted_date, day.entry))
+            self.logger.info(f'Entry saved for date {formatted_date}')
 
     def get_entries(self, start_date: datetime.date, end_date: datetime.date) -> list[tuple[str, str]]:
         query = f'''
@@ -94,18 +96,6 @@ class Entries:
             entries = cursor.fetchall()
             self.logger.info(f'Entries retrieve for month of {start_date.month}')
             return entries
-        
-    def update_entry(self, date: datetime.date, text: str) -> None:
-        query = f'''
-            UPDATE {ENTRIES_TABLE}
-            SET entry = ?
-            WHERE date = ?
-            '''
-        formatted_date = self.format_date(date)[0]
-
-        with self.cursor_manager() as cursor:
-            cursor.execute(query, (text, formatted_date))
-            self.logger.info(f'Entry updated for date: {formatted_date}')
 
     def delete_entry(self, date: datetime.date) -> None:
         query = f'''

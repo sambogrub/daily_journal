@@ -108,15 +108,11 @@ class Controller:
 
     #--------------------- Data Controller interaction ----------------------
 
-    def save_day(self, entry):
+    def save_day(self, entry: str):
         #wanted to make sure to extract the needed data to pass to the data controller,
         #rather than pass the day object
-        date = self._focus_day.date
-        if self._focus_day.entry:
-            self._entries.update_entry(date, entry)
-        else:
-            self._entries.save_entry(date, entry)
         self._focus_day.entry = entry
+        self._entries.save(self._focus_day)
 
     def delete_entry(self, date: datetime.date):
         if self._focus_day.entry:
