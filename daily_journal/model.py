@@ -16,7 +16,7 @@ class Day:
         self.date_string = self.get_date_string()
     
     def get_date_string(self):
-        return datetime.date.strftime(self.date, '%B %-d, %Y')
+        return f'{self.date:%B} {self.date.day}, {self.date.year}'
     
     def set_entry(self, entry: str):
         self.entry = entry
