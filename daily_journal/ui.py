@@ -60,7 +60,7 @@ class MainPage(ttk.Frame):
 
     def populate_frame(self):
         #this populates the frame with the date, text entry box, save entry button, as well as the calendar page button
-        self.date_label = ttk.Label(self,textvariable=self.date_str)
+        self.date_label = ttk.Label(self, textvariable=self.date_str)
         self.cal_page_button = ttk.Button(self, text='Calendar Page', command=lambda: self.cont.show_page('calendar'))
         self.entry_textbox = tk.Text(self, wrap='none')
         self.save_entry_button = ttk.Button(self, text='Save Entry', command=self.save_entry_button_clicked)
@@ -110,7 +110,7 @@ class CalendarPage(ttk.Frame):
         self.populate_frame()
 
     def populate_frame(self):
-       
+        date_snips = {'12-7-2024':'This entry is a test', '12-6-2024':'This is also a test', '12-1-2024':'Testing with the third one'}
 
         self.calendar_label = ttk.Label(self, textvariable=self.month_name_var)
         self.prev_month_button = ttk.Button(self, text='Prev', command=self.reverse_calendar)
@@ -118,6 +118,7 @@ class CalendarPage(ttk.Frame):
         self.calendar_frame = CalendarFrame(self, self.cont)
         self.refresh_calendar_frame()
         self.today_button = ttk.Button(self, text='Today', command=self.cont.today_clicked)
+        self.recent_entries = RecentEntriesFrame(self, self.cont)
 
         
         self.calendar_label.place(anchor='n', relx=.5, y=5, width=120, height=40)
@@ -125,6 +126,11 @@ class CalendarPage(ttk.Frame):
         self.prev_month_button.place(anchor='n', relx=.25, y=5, width=75, height=40)
         self.next_month_button.place(anchor='n', relx=.75, y=5, width=75, height=40)
         self.today_button.place(x=5, rely=.15, width=50, height=45)
+        self.recent_entries.place(anchor='se', relx=.99, rely=.99, relwidth=.97, relheight=.45)
+
+        recent_entries_data = self.cont.get_recent_entries()
+
+        self.recent_entries.set_date_entry_text(recent_entries_data)
 
     def refresh_calendar_frame(self):
         """This function was made separate from the calendar frame class to make it easier for the controller to call"""
@@ -206,6 +212,42 @@ class RecentEntriesFrame(ttk.Frame):
         super().__init__(parent)
         self.log = logger.journal_logger()
         self.cont = controller_
+        self.date1 = tk.StringVar()
+        self.date2 = tk.StringVar()
+        self.date3 = tk.StringVar()
+        self.entry_snip1 = tk.StringVar()
+        self.entry_snip2 = tk.StringVar()
+        self.entry_snip3 = tk.StringVar()
+
+        self.populate_recent_frame()
+
+    def populate_recent_frame(self):
+        frame_label = ttk.Label(self, text='Recent Entries')
+        date_button1 = ttk.Button(self, textvariable=self.date1)
+        date_button2 = ttk.Button(self, textvariable=self.date2)
+        date_button3 = ttk.Button(self, textvariable=self.date3)
+
+        entry_label1 = ttk.Label(self, textvariable=self.entry_snip1)
+        entry_label2 = ttk.Label(self, textvariable=self.entry_snip2)
+        entry_label3 = ttk.Label(self, textvariable=self.entry_snip3)
+
+        frame_label.grid(column=0, row=0, columnspan=3)
+        date_button1.grid(column=0, row=1, columnspan=1)
+        date_button2.grid(column=0, row=2, columnspan=1)
+        date_button3.grid(column=0, row=3, columnspan=1)
+
+        entry_label1.grid(column=1, row=1, columnspan=2)
+        entry_label2.grid(column=1, row=2, columnspan=2)
+        entry_label3.grid(column=1, row=3, columnspan=2)
+    
+    def set_date_entry_text(self, data: list[tuple]):
+        dates = [self.date1, self.date2, self.date3]
+        entry_snips = [self.entry_snip1, self.entry_snip2, self.entry_snip3]
+        index = 0
+        for item in data:
+            dates[index].set(item[0])
+            entry_snips[index].set(item[1][:45])
+            index += 1
 
 
 class OptionsPage(ttk.Frame):

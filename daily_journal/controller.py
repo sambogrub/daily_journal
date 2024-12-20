@@ -30,6 +30,8 @@ class Controller:
         self.ui_pages = self.init_ui_pages(self._focus_day)
         self.show_page(PageId.MAIN)
 
+        # self.get_recent_entries()
+
     #----------------------- focus day management -------------------
 
     @property
@@ -78,7 +80,6 @@ class Controller:
         next_month = cur_date + relativedelta(months = -1)
         self.focus_month = next_month
         self.distribute_entries_to_month()
-        self.get_recent_entries()
     
     #------------------------- UI management ---------------------
 
@@ -110,21 +111,11 @@ class Controller:
         self.ui_pages[PageId.CALENDAR].refresh_calendar_frame()
         self.show_page(PageId.MAIN)
 
-    def get_recent_entries(self) -> dict:
-        entries_dict = {}
-        index = 1
+    def get_recent_entries(self) -> list[tuple]:
+        entries = self.data_controller.get_recent_entries(3)
+        return entries
 
-        while len(entries_dict) <= 5:
-            check_date = self._focus_day.date + relativedelta(days = -index)
-            check_day_of_month = check_date.day
-            check_day = self._focus_month[check_day_of_month]
-            if check_day.entry:
-                entries_dict[check_day.date_string] = check_day.entry
-            index += 1
-            if check_date.day == 1:
-                break
-
-        print(entries_dict)
+    
 
 
     #--------------------- Data Controller interaction ----------------------
@@ -151,6 +142,8 @@ class Controller:
         self._focus_month.populate_days_with_entries(entries)
 
     
+
+    
     
 
 class DataController:
@@ -171,5 +164,9 @@ class DataController:
     
     def delete_entry(self, date: datetime.date) -> None:
         self.entries.delete_entry(date)
+
+    def get_recent_entries(self, num_entries) -> list[tuple]:
+        entries = self.entries.get_recent_entries(num_entries)
+        return entries
     
     

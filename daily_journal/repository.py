@@ -115,5 +115,16 @@ class Entries:
             cursor.execute(query, (formatted_date, ))
             self.logger.info(f'Entry deleted for date: {formatted_date}')
         
+    def get_recent_entries(self, num_entries: int) -> list[tuple]:
+        query = f'''
+            SELECT date, entry
+            FROM {ENTRIES_TABLE}
+            ORDER BY id DESC
+            LIMIT {num_entries}
+            '''
         
-        
+        with self.cursor_manager() as cursor:
+            cursor.execute(query, )
+            data = cursor.fetchall()
+            self.logger.info('Retrieved most recent entries')
+            return data
