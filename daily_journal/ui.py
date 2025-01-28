@@ -24,7 +24,37 @@ class StyleManager:
 
     def configure_styles(self):
         #will be called to set specific styles for the app
-        pass
+        """Defines the styles for different widgets."""
+        # Global styles
+        self.style.configure('TLabel', font=('Helvetica', 12), padding=5)
+        self.style.configure('TButton', font=('Helvetica', 12, 'bold'), padding=5)
+        self.style.configure('TFrame', background='#f0f0f0')
+
+        # Entry box style
+        self.style.configure('TText', background='#ffffff', padding=5, relief='flat')
+
+        # Calendar day buttons
+        self.style.configure('CalendarButton.TButton', background='#e6f7ff', foreground='#004080')
+        self.style.map('CalendarButton.TButton', background=[('active', '#cce7ff')])
+
+        # Save button
+        self.style.configure('SaveButton.TButton', background='#4CAF50', foreground='#ffffff')
+        self.style.map('SaveButton.TButton', background=[('active', '#45a049')])
+
+        # Navigation buttons
+        self.style.configure('NavButton.TButton', background='#4CAF50', foreground='#ffffff')
+        self.style.map('NavButton.TButton', background=[('active', '#0056b3')])
+
+    def set_dark_mode(self):
+        """Switches to a dark mode theme."""
+        self.style.configure('TLabel', background='#2e2e2e', foreground='#f0f0f0')
+        self.style.configure('TButton', background='#444444', foreground='#f0f0f0')
+        self.style.configure('TFrame', background='#1e1e1e')
+        self.style.configure('TText', background='#3e3e3e', foreground='#ffffff')
+
+    def set_light_mode(self):
+        """Switches to a light mode theme."""
+        self.configure_styles()  # Reset to default light theme styles
 
 
 class MainPage(ttk.Frame):
@@ -61,9 +91,9 @@ class MainPage(ttk.Frame):
     def populate_frame(self):
         #this populates the frame with the date, text entry box, save entry button, as well as the calendar page button
         self.date_label = ttk.Label(self, textvariable=self.date_str)
-        self.cal_page_button = ttk.Button(self, text='Calendar Page', command=lambda: self.cont.show_page('calendar'))
+        self.cal_page_button = ttk.Button(self, text='Calendar Page', style='NavButton.TButton', command=lambda: self.cont.show_page('calendar'))
         self.entry_textbox = tk.Text(self, wrap='none')
-        self.save_entry_button = ttk.Button(self, text='Save Entry', command=self.save_entry_button_clicked)
+        self.save_entry_button = ttk.Button(self, text='Save Entry', style='SaveButton.TButton', command=self.save_entry_button_clicked)
 
         #place the widgets
         self.date_label.place(anchor='n', relx=.5, y=0, width=150, height=40)

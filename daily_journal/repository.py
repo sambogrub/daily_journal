@@ -1,11 +1,11 @@
 """Module will hold the entries repository, as well as the table initialization function"""
 
 import sqlite3
-import logger
 import datetime
 from contextlib import contextmanager
 
 from config import ENTRIES_TABLE
+import logger
 
 
 def init_entries_table(conn: sqlite3.Connection, logger_: logger.logging.Logger) -> None:
