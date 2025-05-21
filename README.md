@@ -1,2 +1,6 @@
 # Daily Journal
- This is a simplistic journal app. It allows the user to save daily journal entries, as well as review past entries.
+## Purpose: 
+ A desktop journaling tool built with Python and Tkinter. Tracks daily entries, organized by date, and stores them in a SQLite database.
+
+## Status: 
+ Functional — still adding features like search and calendar view.
